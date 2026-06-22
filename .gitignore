@@ -80,8 +80,8 @@ memory/
 *.bak
 *.backup
 
-# Package manager locks
-package-lock.json
+# Package manager locks (keep package-lock.json for GitHub Actions)
+# package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
