@@ -4,6 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  base: '/pv-climate-simulation-/', // GitHub Pages repository name
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src')
@@ -17,5 +18,10 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true
   }
 })
