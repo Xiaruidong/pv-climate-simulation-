@@ -39,7 +39,7 @@
             <button class="quick-action" @click="importSettings">
               📤 导入配置
             </button>
-            <button class="quick-action" @click="saveAllSettings">
+            <button class="quick-action primary" @click="saveAllSettings">
               💾 保存所有更改
             </button>
           </div>
@@ -81,6 +81,17 @@
             </div>
             <label class="toggle-switch">
               <input v-model="settings.animations" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">自动保存</label>
+              <span class="setting-description">设置修改后自动保存</span>
+            </div>
+            <label class="toggle-switch">
+              <input v-model="settings.autoSave" type="checkbox" />
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -147,6 +158,28 @@
               <span class="toggle-slider"></span>
             </label>
           </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">显示收敛信息</label>
+              <span class="setting-description">计算完成后显示收敛分析</span>
+            </div>
+            <label class="toggle-switch">
+              <input v-model="calculationSettings.showConvergence" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">结果缓存</label>
+              <span class="setting-description">缓存计算结果以提高性能</span>
+            </div>
+            <label class="toggle-switch">
+              <input v-model="calculationSettings.cacheResults" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
 
         <!-- 数据管理设置 -->
@@ -155,7 +188,7 @@
 
           <div class="setting-item">
             <div class="setting-info">
-              <label class="setting-label">自动保存</label>
+              <label class="setting-label">自动保存模拟结果</label>
               <span class="setting-description">模拟完成后自动保存结果</span>
             </div>
             <label class="toggle-switch">
@@ -173,6 +206,7 @@
               <option value="50">50条</option>
               <option value="100">100条</option>
               <option value="200">200条</option>
+              <option value="500">500条</option>
               <option value="unlimited">无限制</option>
             </select>
           </div>
@@ -187,6 +221,17 @@
               <option value="json">JSON (.json)</option>
               <option value="excel">Excel (.xlsx)</option>
             </select>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">包含元数据</label>
+              <span class="setting-description">导出时包含时间戳和参数信息</span>
+            </div>
+            <label class="toggle-switch">
+              <input v-model="dataSettings.includeMetadata" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
           </div>
 
           <div class="setting-item">
@@ -240,6 +285,103 @@
               <option value="high">高 (质量优先)</option>
             </select>
           </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">实时显示</label>
+              <span class="setting-description">参数修改时实时更新显示</span>
+            </div>
+            <label class="toggle-switch">
+              <input v-model="displaySettings.showRealTime" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">图表样式</label>
+              <span class="setting-description">图表显示的视觉风格</span>
+            </div>
+            <select v-model="displaySettings.chartStyle" class="setting-select">
+              <option value="modern">现代风格</option>
+              <option value="classic">经典风格</option>
+              <option value="minimal">极简风格</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 存储管理 -->
+        <div v-if="activeCategory === 'storage'" class="setting-group">
+          <h3 class="setting-group-title">📊 存储管理</h3>
+
+          <!-- 存储统计信息 -->
+          <div class="storage-stats">
+            <div class="stat-item">
+              <span class="stat-label">历史记录数</span>
+              <span class="stat-value">{{ storageStats.totalRecords }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">存储使用</span>
+              <span class="stat-value">{{ storageStats.storageUsed }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">存储状态</span>
+              <span
+                class="stat-value"
+                :style="{ color: getStorageHealthColor(storageStats.storageHealth) }"
+              >
+                {{ getStorageHealthText(storageStats.storageHealth) }}
+              </span>
+            </div>
+            <div class="stat-item" v-if="storageStats.oldestRecord">
+              <span class="stat-label">最早记录</span>
+              <span class="stat-value">{{ storageStats.oldestRecord }}</span>
+            </div>
+            <div class="stat-item" v-if="storageStats.newestRecord">
+              <span class="stat-label">最新记录</span>
+              <span class="stat-value">{{ storageStats.newestRecord }}</span>
+            </div>
+          </div>
+
+          <!-- 数据管理操作 -->
+          <div class="data-operations">
+            <h4 class="operation-title">数据管理操作</h4>
+
+            <button class="operation-button" @click="calculateStorageStats">
+              🔄 刷新统计
+            </button>
+
+            <button class="operation-button" @click="batchDeleteHistory">
+              🗑️ 批量删除（按天数）
+            </button>
+
+            <button class="operation-button" @click="deleteByDateRange">
+              📅 按日期范围删除
+            </button>
+
+            <button class="operation-button primary" @click="exportAllData">
+              📦 导出所有数据
+            </button>
+          </div>
+
+          <!-- 存储优化建议 -->
+          <div class="storage-tips" v-if="storageStats.storageHealth !== 'good'">
+            <h4 class="tips-title">💡 存储优化建议</h4>
+            <ul class="tips-list">
+              <li v-if="storageStats.storageHealth === 'critical'">
+                存储空间紧张，建议删除部分历史记录
+              </li>
+              <li v-if="storageStats.storageHealth === 'warning'">
+                存储使用较多，建议定期清理不需要的数据
+              </li>
+              <li>
+                导出重要数据进行备份，然后清除本地记录
+              </li>
+              <li>
+                考虑调整历史记录限制设置
+              </li>
+            </ul>
+          </div>
         </div>
 
         <!-- 关于 -->
@@ -253,7 +395,7 @@
             </div>
             <div class="about-item">
               <span class="about-label">系统版本:</span>
-              <span class="about-value">v2.0.0</span>
+              <span class="about-value">v2.0.0 (Real Physics Edition)</span>
             </div>
             <div class="about-item">
               <span class="about-label">物理模型:</span>
@@ -270,6 +412,47 @@
             <div class="about-item">
               <span class="about-label">存储方案:</span>
               <span class="about-value">localStorage (可选MySQL)</span>
+            </div>
+            <div class="about-item">
+              <span class="about-label">部署平台:</span>
+              <span class="about-value">GitHub Pages / Vercel</span>
+            </div>
+            <div class="about-item">
+              <span class="about-label">开源地址:</span>
+              <a href="https://github.com/Xiaruidong/pv-climate-simulation-" class="about-link" target="_blank">
+                GitHub Repository
+              </a>
+            </div>
+          </div>
+
+          <!-- 系统特性 -->
+          <div class="system-features">
+            <h4 class="features-title">✨ 系统特性</h4>
+            <div class="features-list">
+              <div class="feature-item">
+                <span class="feature-icon">🔬</span>
+                <span class="feature-text">真实物理计算</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">🎯</span>
+                <span class="feature-text">高精度结果显示</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">🌍</span>
+                <span class="feature-text">实时3D可视化</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">💾</span>
+                <span class="feature-text">本地数据存储</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <span class="feature-text">历史记录管理</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">🔄</span>
+                <span class="feature-text">数据对比功能</span>
+              </div>
             </div>
           </div>
         </div>
@@ -297,8 +480,16 @@
                 <span class="summary-value">{{ getUnitName(displaySettings.temperatureUnit) }}</span>
               </div>
               <div class="summary-item">
+                <span class="summary-label">显示精度</span>
+                <span class="summary-value">{{ displaySettings.decimalPlaces }}位小数</span>
+              </div>
+              <div class="summary-item">
                 <span class="summary-label">自动保存</span>
                 <span class="summary-value">{{ dataSettings.autoSave ? '开启' : '关闭' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">积分方法</span>
+                <span class="summary-value">{{ getMethodDisplayName(calculationSettings.integrationMethod) }}</span>
               </div>
             </div>
           </div>
@@ -313,7 +504,7 @@
               </div>
               <div class="shortcut-item">
                 <span class="shortcut-key">Ctrl+R</span>
-                <span class="shortcut-desc">重置所有设置</span>
+                <span class="shortcut-desc">重置当前分类</span>
               </div>
             </div>
           </div>
@@ -331,7 +522,21 @@
             <button class="action-button" @click="goBack">
               ← 返回主界面
             </button>
+            <button class="action-button" @click="applySettings">
+              ✨ 应用设置
+            </button>
           </div>
+        </div>
+
+        <!-- 设置提示 -->
+        <div class="settings-tips">
+          <h4 class="tips-title">💡 使用提示</h4>
+          <ul class="tips-list">
+            <li>设置修改后会自动保存到浏览器</li>
+            <li>可以导出设置进行备份</li>
+            <li>支持导入配置文件快速部署</li>
+            <li>存储管理功能帮助优化性能</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -339,10 +544,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 
 // 设置分类
 const categories = [
@@ -350,17 +552,28 @@ const categories = [
   { id: 'calculation', name: '计算设置', icon: '🔬' },
   { id: 'data', name: '数据管理', icon: '💾' },
   { id: 'display', name: '显示设置', icon: '🎨' },
+  { id: 'storage', name: '存储管理', icon: '📊' },
   { id: 'about', name: '关于', icon: 'ℹ️' }
 ]
 
 // 当前活动分类
 const activeCategory = ref('general')
 
+// 存储统计信息
+const storageStats = ref({
+  totalRecords: 0,
+  storageUsed: '0 KB',
+  oldestRecord: null,
+  newestRecord: null,
+  storageHealth: 'good'
+})
+
 // 通用设置
 const settings = reactive({
   language: 'zh',
   theme: 'dark',
-  animations: true
+  animations: true,
+  autoSave: true
 })
 
 // 计算设置
@@ -368,26 +581,253 @@ const calculationSettings = reactive({
   defaultYears: 100,
   integrationMethod: 'runge_kutta',
   tolerance: 0.001,
-  autoCalculate: true
+  autoCalculate: true,
+  showConvergence: true,
+  cacheResults: true
 })
 
 // 数据管理设置
 const dataSettings = reactive({
   autoSave: true,
   historyLimit: 100,
-  exportFormat: 'json'
+  exportFormat: 'json',
+  includeMetadata: true,
+  compressData: false
 })
 
 // 显示设置
 const displaySettings = reactive({
   temperatureUnit: 'celsius',
   decimalPlaces: 4,
-  gridDensity: 'medium'
+  gridDensity: 'medium',
+  showRealTime: true,
+  chartStyle: 'modern'
 })
+
+// 计算存储统计
+const calculateStorageStats = () => {
+  try {
+    // 获取历史记录
+    const historyKey = 'calculation_results'
+    const historyData = localStorage.getItem(historyKey)
+
+    if (historyData) {
+      const history = JSON.parse(historyData)
+      const records = Array.isArray(history) ? history : []
+
+      storageStats.value.totalRecords = records.length
+
+      // 计算存储大小
+      const storageSize = new Blob([historyData]).size
+      storageStats.value.storageUsed = formatBytes(storageSize)
+
+      // 获取最旧和最新记录
+      if (records.length > 0) {
+        const timestamps = records
+          .map(r => new Date(r.timestamp || r.created_at))
+          .filter(date => !isNaN(date.getTime()))
+
+        if (timestamps.length > 0) {
+          storageStats.value.oldestRecord = new Date(Math.min(...timestamps)).toLocaleDateString('zh-CN')
+          storageStats.value.newestRecord = new Date(Math.max(...timestamps)).toLocaleDateString('zh-CN')
+        }
+      }
+
+      // 存储健康状况
+      const storagePercentage = (storageSize / (5 * 1024 * 1024)) * 100 // 假设5MB限制
+      if (storagePercentage > 80) {
+        storageStats.value.storageHealth = 'critical'
+      } else if (storagePercentage > 60) {
+        storageStats.value.storageHealth = 'warning'
+      } else {
+        storageStats.value.storageHealth = 'good'
+      }
+    } else {
+      storageStats.value.totalRecords = 0
+      storageStats.value.storageUsed = '0 B'
+      storageStats.value.storageHealth = 'good'
+    }
+  } catch (error) {
+    console.error('计算存储统计失败:', error)
+  }
+}
+
+// 格式化字节大小
+const formatBytes = (bytes) => {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+// 获取存储健康状态文本
+const getStorageHealthText = (health) => {
+  const texts = {
+    good: '存储充足',
+    warning: '存储较多',
+    critical: '存储紧张'
+  }
+  return texts[health] || health
+}
+
+// 获取存储健康状态颜色
+const getStorageHealthColor = (health) => {
+  const colors = {
+    good: '#4ad97f',
+    warning: '#ffa947',
+    critical: '#ff5747'
+  }
+  return colors[health] || '#4a5568'
+}
+
+// 批量删除历史记录
+const batchDeleteHistory = () => {
+  const days = prompt('删除多少天前的记录？（输入天数，如：30）')
+  if (days && !isNaN(days)) {
+    try {
+      const historyKey = 'calculation_results'
+      const historyData = localStorage.getItem(historyKey)
+
+      if (historyData) {
+        const history = JSON.parse(historyData)
+        const records = Array.isArray(history) ? history : []
+
+        const cutoffDate = new Date()
+        cutoffDate.setDate(cutoffDate.getDate() - parseInt(days))
+
+        const filteredRecords = records.filter(record => {
+          const recordDate = new Date(record.timestamp || record.created_at)
+          return recordDate > cutoffDate
+        })
+
+        localStorage.setItem(historyKey, JSON.stringify(filteredRecords))
+
+        const deletedCount = records.length - filteredRecords.length
+        showNotification(`已删除 ${deletedCount} 条历史记录`, 'success')
+
+        calculateStorageStats()
+      } else {
+        showNotification('没有找到历史记录', 'info')
+      }
+    } catch (error) {
+      showNotification('删除失败：' + error.message, 'error')
+    }
+  }
+}
+
+// 按日期范围删除
+const deleteByDateRange = () => {
+  const startDate = prompt('开始日期 (格式: YYYY-MM-DD)')
+  const endDate = prompt('结束日期 (格式: YYYY-MM-DD)')
+
+  if (startDate && endDate) {
+    try {
+      const historyKey = 'calculation_results'
+      const historyData = localStorage.getItem(historyKey)
+
+      if (historyData) {
+        const history = JSON.parse(historyData)
+        const records = Array.isArray(history) ? history : []
+
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+        end.setHours(23, 59, 59)
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          showNotification('日期格式错误，请使用 YYYY-MM-DD 格式', 'error')
+          return
+        }
+
+        const filteredRecords = records.filter(record => {
+          const recordDate = new Date(record.timestamp || record.created_at)
+          return recordDate < start || recordDate > end
+        })
+
+        localStorage.setItem(historyKey, JSON.stringify(filteredRecords))
+
+        const deletedCount = records.length - filteredRecords.length
+        showNotification(`已删除 ${deletedCount} 条记录`, 'success')
+
+        calculateStorageStats()
+      }
+    } catch (error) {
+      showNotification('删除失败：' + error.message, 'error')
+    }
+  }
+}
+
+// 导出所有数据
+const exportAllData = () => {
+  try {
+    // 导出历史记录
+    const historyKey = 'calculation_results'
+    const historyData = localStorage.getItem(historyKey)
+
+    // 导出用户设置
+    const settingsData = localStorage.getItem('userSettings')
+
+    // 创建完整备份
+    const backup = {
+      version: '2.0.0',
+      exportDate: new Date().toISOString(),
+      settings: settingsData ? JSON.parse(settingsData) : null,
+      history: historyData ? JSON.parse(historyData) : [],
+      metadata: {
+        totalRecords: historyData ? JSON.parse(historyData).length : 0,
+        exportFormat: 'full_backup'
+      }
+    }
+
+    const dataStr = JSON.stringify(backup, null, 2)
+    const blob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `pv-simulator-backup-${new Date().toISOString().split('T')[0]}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+
+    showNotification(`已导出 ${backup.metadata.totalRecords} 条记录和完整设置`, 'success')
+  } catch (error) {
+    showNotification('导出失败：' + error.message, 'error')
+  }
+}
+
+// 应用设置到当前系统
+const applySettings = () => {
+  // 触发事件通知其他组件设置已更新
+  window.dispatchEvent(new CustomEvent('settingsUpdated', {
+    detail: {
+      display: displaySettings,
+      calculation: calculationSettings
+    }
+  }))
+
+  showNotification('设置已应用到当前系统', 'success')
+}
+
+// 获取积分方法显示名称
+const getMethodDisplayName = (method) => {
+  const names = {
+    euler: '欧拉法',
+    runge_kutta: '龙格-库塔法',
+    adaptive: '自适应步长'
+  }
+  return names[method] || method
+}
+
+// 监听设置变化，自动应用
+watch([displaySettings, calculationSettings], () => {
+  if (settings.autoSave) {
+    applySettings()
+  }
+}, { deep: true })
 
 // 组件挂载时加载设置
 onMounted(() => {
   loadSettings()
+  calculateStorageStats()
 })
 
 // 加载设置
@@ -434,6 +874,35 @@ const getUnitName = (id) => {
   return names[id] || id
 }
 
+// 显示通知
+const showNotification = (message, type = 'info') => {
+  // 创建通知元素
+  const notification = document.createElement('div')
+  notification.className = `settings-notification ${type}`
+  notification.textContent = message
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#4ad97f' : type === 'error' ? '#ff5747' : '#4a9eff'};
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-size: 14px;
+    font-weight: 600;
+    animation: slideIn 0.3s ease;
+  `
+
+  document.body.appendChild(notification)
+
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease'
+    setTimeout(() => document.body.removeChild(notification), 300)
+  }, 3000)
+}
+
 // 保存所有设置
 const saveAllSettings = () => {
   const allSettings = {
@@ -444,17 +913,21 @@ const saveAllSettings = () => {
   }
 
   localStorage.setItem('userSettings', JSON.stringify(allSettings))
-  alert('设置已保存成功！')
+  applySettings()
+  showNotification('设置已保存成功', 'success')
 }
 
 // 重置当前分类设置
 const resetCurrentCategory = () => {
+  if (!confirm('确定要重置当前分类的设置吗？')) return
+
   switch (activeCategory.value) {
     case 'general':
       Object.assign(settings, {
         language: 'zh',
         theme: 'dark',
-        animations: true
+        animations: true,
+        autoSave: true
       })
       break
     case 'calculation':
@@ -462,25 +935,31 @@ const resetCurrentCategory = () => {
         defaultYears: 100,
         integrationMethod: 'runge_kutta',
         tolerance: 0.001,
-        autoCalculate: true
+        autoCalculate: true,
+        showConvergence: true,
+        cacheResults: true
       })
       break
     case 'data':
       Object.assign(dataSettings, {
         autoSave: true,
         historyLimit: 100,
-        exportFormat: 'json'
+        exportFormat: 'json',
+        includeMetadata: true,
+        compressData: false
       })
       break
     case 'display':
       Object.assign(displaySettings, {
         temperatureUnit: 'celsius',
         decimalPlaces: 4,
-        gridDensity: 'medium'
+        gridDensity: 'medium',
+        showRealTime: true,
+        chartStyle: 'modern'
       })
       break
   }
-  alert('当前分类设置已重置！')
+  showNotification('当前分类设置已重置', 'info')
 }
 
 // 重置所有设置
@@ -488,26 +967,41 @@ const resetAllSettings = () => {
   if (confirm('确定要重置所有设置吗？此操作不可撤销。')) {
     localStorage.removeItem('userSettings')
     loadSettings()
-    alert('所有设置已重置！')
+    showNotification('所有设置已重置', 'info')
   }
 }
 
 // 清除所有历史数据
 const clearAllHistory = () => {
   if (confirm('确定要删除所有历史模拟记录吗？此操作不可撤销。')) {
-    localStorage.removeItem('calculation_results')
-    localStorage.removeItem('simulation_history')
-    alert('所有历史数据已清除！')
+    const keysToDelete = ['calculation_results', 'simulation_history']
+    let deletedCount = 0
+
+    keysToDelete.forEach(key => {
+      const data = localStorage.getItem(key)
+      if (data) {
+        const parsed = JSON.parse(data)
+        deletedCount += Array.isArray(parsed) ? parsed.length : 0
+        localStorage.removeItem(key)
+      }
+    })
+
+    calculateStorageStats()
+    showNotification(`已清除 ${deletedCount} 条历史数据`, 'success')
   }
 }
 
 // 导出设置
 const exportSettings = () => {
   const allSettings = {
-    general: settings,
-    calculation: calculationSettings,
-    data: dataSettings,
-    display: displaySettings
+    version: '2.0.0',
+    exportDate: new Date().toISOString(),
+    settings: {
+      general: settings,
+      calculation: calculationSettings,
+      data: dataSettings,
+      display: displaySettings
+    }
   }
 
   const dataStr = JSON.stringify(allSettings, null, 2)
@@ -515,11 +1009,11 @@ const exportSettings = () => {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `pv-simulator-settings-${Date.now()}.json`
+  a.download = `pv-simulator-settings-${new Date().toISOString().split('T')[0]}.json`
   a.click()
   URL.revokeObjectURL(url)
 
-  alert('设置配置已导出！')
+  showNotification('设置配置已导出', 'success')
 }
 
 // 导入设置
@@ -533,15 +1027,19 @@ const importSettings = () => {
     reader.onload = (event) => {
       try {
         const imported = JSON.parse(event.target.result)
-        if (imported.general) Object.assign(settings, imported.general)
-        if (imported.calculation) Object.assign(calculationSettings, imported.calculation)
-        if (imported.data) Object.assign(dataSettings, imported.data)
-        if (imported.display) Object.assign(displaySettings, imported.display)
+
+        // 兼容不同的导入格式
+        const settingsToImport = imported.settings || imported
+
+        if (settingsToImport.general) Object.assign(settings, settingsToImport.general)
+        if (settingsToImport.calculation) Object.assign(calculationSettings, settingsToImport.calculation)
+        if (settingsToImport.data) Object.assign(dataSettings, settingsToImport.data)
+        if (settingsToImport.display) Object.assign(displaySettings, settingsToImport.display)
 
         saveAllSettings()
-        alert('设置配置已导入！')
+        showNotification('设置配置已导入', 'success')
       } catch (error) {
-        alert('导入失败：配置文件格式错误')
+        showNotification('导入失败：配置文件格式错误', 'error')
       }
     }
     reader.readAsText(file)
@@ -551,7 +1049,8 @@ const importSettings = () => {
 
 // 返回主界面
 const goBack = () => {
-  router.push('/')
+  activeCategory.value = 'general'
+  showNotification('已返回主设置页面', 'info')
 }
 </script>
 
@@ -668,6 +1167,12 @@ const goBack = () => {
   background: rgba(102, 126, 234, 0.1);
   border-color: #4a9eff;
   color: #2d3748;
+}
+
+.quick-action.primary {
+  background: linear-gradient(135deg, #4a9eff, #00d9ff);
+  border-color: transparent;
+  color: white;
 }
 
 .setting-group {
@@ -800,10 +1305,113 @@ const goBack = () => {
   box-shadow: 0 4px 12px rgba(255, 87, 71, 0.3);
 }
 
+/* 存储管理样式 */
+.storage-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(245, 247, 250, 0.8);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #718096;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #00d9ff;
+}
+
+.data-operations {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.operation-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.operation-button {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 6px;
+  color: #4a5568;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.operation-button:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #4a9eff;
+}
+
+.operation-button.primary {
+  background: linear-gradient(135deg, #4a9eff, #00d9ff);
+  border-color: transparent;
+  color: white;
+}
+
+.storage-tips {
+  padding: 12px;
+  background: rgba(255, 157, 0, 0.1);
+  border: 1px solid #ffa947;
+  border-radius: 8px;
+}
+
+.tips-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffa947;
+  margin-bottom: 8px;
+}
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tips-list li {
+  font-size: 11px;
+  color: #4a5568;
+  margin-bottom: 4px;
+  padding-left: 12px;
+  position: relative;
+}
+
+.tips-list li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #ffa947;
+}
+
+/* 关于页面样式 */
 .about-info {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-bottom: 20px;
 }
 
 .about-item {
@@ -826,6 +1434,52 @@ const goBack = () => {
   font-weight: 600;
 }
 
+.about-link {
+  color: #4a9eff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.about-link:hover {
+  text-decoration: underline;
+}
+
+.system-features {
+  margin-top: 20px;
+}
+
+.features-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #00d9ff;
+  margin-bottom: 12px;
+}
+
+.features-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.feature-icon {
+  font-size: 14px;
+}
+
+.feature-text {
+  color: #4a5568;
+}
+
+/* 设置摘要 */
 .settings-summary {
   margin-bottom: 16px;
 }
@@ -928,6 +1582,42 @@ const goBack = () => {
   color: white;
 }
 
+.settings-tips {
+  padding: 12px;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid #4ad97f;
+  border-radius: 8px;
+}
+
+.tips-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4ad97f;
+  margin-bottom: 8px;
+}
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tips-list li {
+  font-size: 11px;
+  color: #4a5568;
+  margin-bottom: 4px;
+  padding-left: 12px;
+  position: relative;
+}
+
+.tips-list li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #4ad97f;
+  font-weight: 600;
+}
+
 /* 响应式适配 */
 @media (max-width: 1200px) {
   .settings-content {
@@ -945,6 +1635,28 @@ const goBack = () => {
 
   .preview-panel {
     order: 3;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
 </style>
