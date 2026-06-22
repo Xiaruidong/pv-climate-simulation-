@@ -48,9 +48,9 @@
 
       <!-- 中间：设置内容 -->
       <div class="settings-panel">
-        <!-- 常规设置 -->
+        <!-- 通用设置 -->
         <div v-if="activeCategory === 'general'" class="setting-group">
-          <h3 class="setting-group-title">🎛️ 常规设置</h3>
+          <h3 class="setting-group-title">🎛️ 通用设置</h3>
 
           <div class="setting-item">
             <div class="setting-info">
@@ -60,7 +60,6 @@
             <select v-model="settings.language" class="setting-select">
               <option value="zh">简体中文</option>
               <option value="en">English</option>
-              <option value="ja">日本語</option>
             </select>
           </div>
 
@@ -72,19 +71,6 @@
             <select v-model="settings.theme" class="setting-select">
               <option value="dark">深色科技风</option>
               <option value="light">浅色简约风</option>
-              <option value="auto">跟随系统</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">界面密度</label>
-              <span class="setting-description">调整界面元素间距</span>
-            </div>
-            <select v-model="settings.density" class="setting-select">
-              <option value="compact">紧凑</option>
-              <option value="normal">正常</option>
-              <option value="comfortable">舒适</option>
             </select>
           </div>
 
@@ -98,45 +84,38 @@
               <span class="toggle-slider"></span>
             </label>
           </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">声音效果</label>
-              <span class="setting-description">启用操作反馈声音</span>
-            </div>
-            <label class="toggle-switch">
-              <input v-model="settings.sounds" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
         </div>
 
-        <!-- 模拟参数设置 -->
-        <div v-if="activeCategory === 'simulation'" class="setting-group">
-          <h3 class="setting-group-title">🔬 模拟参数设置</h3>
+        <!-- 计算设置 -->
+        <div v-if="activeCategory === 'calculation'" class="setting-group">
+          <h3 class="setting-group-title">🔬 计算设置</h3>
 
           <div class="setting-item">
             <div class="setting-info">
-              <label class="setting-label">默认时间步长</label>
-              <span class="setting-description">新模拟的默认时间分辨率</span>
+              <label class="setting-label">默认模拟年数</label>
+              <span class="setting-description">新模拟的默认时长</span>
             </div>
-            <select v-model="simulationSettings.defaultTimeStep" class="setting-select">
-              <option value="hourly">小时</option>
-              <option value="daily">天</option>
-              <option value="monthly">月</option>
-              <option value="yearly">年</option>
-            </select>
+            <div class="number-input">
+              <input
+                v-model.number="calculationSettings.defaultYears"
+                type="number"
+                min="10"
+                max="1000"
+                class="tech-input"
+              />
+              <span class="input-unit">年</span>
+            </div>
           </div>
 
           <div class="setting-item">
             <div class="setting-info">
-              <label class="setting-label">默认空间分辨率</label>
-              <span class="setting-description">新模拟的默认空间分辨率</span>
+              <label class="setting-label">数值积分方法</label>
+              <span class="setting-description">默认的数值计算方法</span>
             </div>
-            <select v-model="simulationSettings.defaultResolution" class="setting-select">
-              <option value="coarse">粗分辨率 (50km)</option>
-              <option value="medium">中等分辨率 (10km)</option>
-              <option value="fine">精细分辨率 (1km)</option>
+            <select v-model="calculationSettings.integrationMethod" class="setting-select">
+              <option value="euler">欧拉法 (快速)</option>
+              <option value="runge_kutta">龙格-库塔法 (精确)</option>
+              <option value="adaptive">自适应步长 (平衡)</option>
             </select>
           </div>
 
@@ -147,9 +126,11 @@
             </div>
             <div class="number-input">
               <input
-                v-model.number="simulationSettings.tolerance"
+                v-model.number="calculationSettings.tolerance"
                 type="number"
                 step="0.0001"
+                min="0.0001"
+                max="0.1"
                 class="tech-input"
               />
               <span class="input-unit">精度值</span>
@@ -158,42 +139,13 @@
 
           <div class="setting-item">
             <div class="setting-info">
-              <label class="setting-label">最大迭代次数</label>
-              <span class="setting-description">单次模拟的最大迭代次数</span>
-            </div>
-            <div class="number-input">
-              <input
-                v-model.number="simulationSettings.maxIterations"
-                type="number"
-                class="tech-input"
-              />
-              <span class="input-unit">次</span>
-            </div>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">并行计算</label>
-              <span class="setting-description">启用多核并行计算</span>
+              <label class="setting-label">自动计算</label>
+              <span class="setting-description">参数修改后自动重新计算</span>
             </div>
             <label class="toggle-switch">
-              <input v-model="simulationSettings.parallelComputing" type="checkbox" />
+              <input v-model="calculationSettings.autoCalculate" type="checkbox" />
               <span class="toggle-slider"></span>
             </label>
-          </div>
-
-          <div v-if="simulationSettings.parallelComputing" class="setting-item sub-setting">
-            <div class="setting-info">
-              <label class="setting-label">计算核心数</label>
-              <span class="setting-description">使用的CPU核心数量 (0=自动)</span>
-            </div>
-            <input
-              v-model.number="simulationSettings.parallelCores"
-              type="number"
-              min="0"
-              max="16"
-              class="tech-input"
-            />
           </div>
         </div>
 
@@ -208,30 +160,6 @@
             </div>
             <label class="toggle-switch">
               <input v-model="dataSettings.autoSave" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">保存间隔</label>
-              <span class="setting-description">自动保存的时间间隔</span>
-            </div>
-            <select v-model="dataSettings.saveInterval" class="setting-select">
-              <option value="5">5分钟</option>
-              <option value="10">10分钟</option>
-              <option value="30">30分钟</option>
-              <option value="60">1小时</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">数据缓存</label>
-              <span class="setting-description">缓存模拟结果以提高性能</span>
-            </div>
-            <label class="toggle-switch">
-              <input v-model="dataSettings.caching" type="checkbox" />
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -255,11 +183,20 @@
               <span class="setting-description">默认的数据导出文件格式</span>
             </div>
             <select v-model="dataSettings.exportFormat" class="setting-select">
-              <option value="excel">Excel (.xlsx)</option>
               <option value="csv">CSV (.csv)</option>
               <option value="json">JSON (.json)</option>
-              <option value="pdf">PDF (.pdf)</option>
+              <option value="excel">Excel (.xlsx)</option>
             </select>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">清除历史数据</label>
+              <span class="setting-description">删除所有历史模拟记录</span>
+            </div>
+            <button class="danger-button" @click="clearAllHistory">
+              🗑️ 清除数据
+            </button>
           </div>
         </div>
 
@@ -281,50 +218,20 @@
 
           <div class="setting-item">
             <div class="setting-info">
-              <label class="setting-label">能量单位</label>
-              <span class="setting-description">能量显示的单位制</span>
+              <label class="setting-label">结果显示精度</label>
+              <span class="setting-description">数值显示的小数位数</span>
             </div>
-            <select v-model="displaySettings.energyUnit" class="setting-select">
-              <option value="kj">千焦 (kJ)</option>
-              <option value="mj">兆焦 (MJ)</option>
-              <option value="kwh">千瓦时 (kWh)</option>
-              <option value="btu">英热单位 (BTU)</option>
+            <select v-model="displaySettings.decimalPlaces" class="setting-select">
+              <option value="2">2位小数</option>
+              <option value="4">4位小数</option>
+              <option value="6">6位小数</option>
+              <option value="8">8位小数</option>
             </select>
           </div>
 
           <div class="setting-item">
             <div class="setting-info">
-              <label class="setting-label">图表样式</label>
-              <span class="setting-description">默认的图表显示样式</span>
-            </div>
-            <select v-model="displaySettings.chartStyle" class="setting-select">
-              <option value="modern">现代风格</option>
-              <option value="classic">经典风格</option>
-              <option value="minimal">极简风格</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">颜色方案</label>
-              <span class="setting-description">数据可视化的配色方案</span>
-            </div>
-            <div class="color-options">
-              <button
-                v-for="scheme in colorSchemes"
-                :key="scheme.id"
-                :class="['color-option', { active: displaySettings.colorScheme === scheme.id }]"
-                :style="{ background: scheme.preview }"
-                @click="displaySettings.colorScheme = scheme.id"
-              >
-                {{ scheme.name }}
-              </button>
-            </div>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">网格密度</label>
+              <label class="setting-label">3D网格密度</label>
               <span class="setting-description">3D可视化的网格密度</span>
             </div>
             <select v-model="displaySettings.gridDensity" class="setting-select">
@@ -335,140 +242,35 @@
           </div>
         </div>
 
-        <!-- 通知设置 -->
-        <div v-if="activeCategory === 'notifications'" class="setting-group">
-          <h3 class="setting-group-title">🔔 通知设置</h3>
+        <!-- 关于 -->
+        <div v-if="activeCategory === 'about'" class="setting-group">
+          <h3 class="setting-group-title">ℹ️ 关于系统</h3>
 
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">模拟完成通知</label>
-              <span class="setting-description">模拟计算完成时发送通知</span>
+          <div class="about-info">
+            <div class="about-item">
+              <span class="about-label">系统名称:</span>
+              <span class="about-value">光伏气候效应模拟系统</span>
             </div>
-            <label class="toggle-switch">
-              <input v-model="notificationSettings.simulationComplete" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">错误通知</label>
-              <span class="setting-description">发生错误时立即通知</span>
+            <div class="about-item">
+              <span class="about-label">系统版本:</span>
+              <span class="about-value">v2.0.0</span>
             </div>
-            <label class="toggle-switch">
-              <input v-model="notificationSettings.errors" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">系统更新通知</label>
-              <span class="setting-description">有新版本时通知用户</span>
+            <div class="about-item">
+              <span class="about-label">物理模型:</span>
+              <span class="about-value">零维能量平衡模型 (EBM)</span>
             </div>
-            <label class="toggle-switch">
-              <input v-model="notificationSettings.updates" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">通知方式</label>
-              <span class="setting-description">接收通知的方式</span>
+            <div class="about-item">
+              <span class="about-label">计算标准:</span>
+              <span class="about-value">CODATA 2018 + IPCC AR5</span>
             </div>
-            <div class="notification-methods">
-              <label class="method-checkbox">
-                <input v-model="notificationSettings.methods" value="desktop" type="checkbox" />
-                <span>桌面通知</span>
-              </label>
-              <label class="method-checkbox">
-                <input v-model="notificationSettings.methods" value="sound" type="checkbox" />
-                <span>声音提示</span>
-              </label>
-              <label class="method-checkbox">
-                <input v-model="notificationSettings.methods" value="badge" type="checkbox" />
-                <span>图标徽章</span>
-              </label>
+            <div class="about-item">
+              <span class="about-label">技术栈:</span>
+              <span class="about-value">Vue.js 3 + Vite + Canvas API</span>
             </div>
-          </div>
-        </div>
-
-        <!-- 高级设置 -->
-        <div v-if="activeCategory === 'advanced'" class="setting-group">
-          <h3 class="setting-group-title">🔧 高级设置</h3>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">开发者模式</label>
-              <span class="setting-description">启用开发者工具和调试选项</span>
+            <div class="about-item">
+              <span class="about-label">存储方案:</span>
+              <span class="about-value">localStorage (可选MySQL)</span>
             </div>
-            <label class="toggle-switch">
-              <input v-model="advancedSettings.developerMode" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">调试日志</label>
-              <span class="setting-description">记录详细的调试日志</span>
-            </div>
-            <label class="toggle-switch">
-              <input v-model="advancedSettings.debugLogging" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">硬件加速</label>
-              <span class="setting-description">使用GPU加速计算（如果可用）</span>
-            </div>
-            <label class="toggle-switch">
-              <input v-model="advancedSettings.hardwareAcceleration" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">内存限制</label>
-              <span class="setting-description">模拟可使用的最大内存 (GB)</span>
-            </div>
-            <input
-              v-model.number="advancedSettings.memoryLimit"
-              type="number"
-              min="1"
-              max="64"
-              class="tech-input"
-            />
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">API端点</label>
-              <span class="setting-description">后端API服务地址</span>
-            </div>
-            <input
-              v-model="advancedSettings.apiEndpoint"
-              type="text"
-              placeholder="http://localhost:8000"
-              class="tech-input"
-            />
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label class="setting-label">代理设置</label>
-              <span class="setting-description">网络代理配置</span>
-            </div>
-            <input
-              v-model="advancedSettings.proxy"
-              type="text"
-              placeholder="http://proxy.example.com:8080"
-              class="tech-input"
-            />
           </div>
         </div>
       </div>
@@ -501,39 +303,6 @@
             </div>
           </div>
 
-          <!-- 配置文件信息 -->
-          <div class="config-info">
-            <h4 class="info-title">配置信息</h4>
-            <div class="info-details">
-              <div class="info-row">
-                <span class="info-label">配置文件:</span>
-                <span class="info-value">user_settings.json</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">文件大小:</span>
-                <span class="info-value">2.3 KB</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">最后修改:</span>
-                <span class="info-value">2024-01-20 10:30:15</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">配置版本:</span>
-                <span class="info-value">v2.1.0</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 重置警告 -->
-          <div class="reset-warning">
-            <h4 class="warning-title">⚠️ 注意事项</h4>
-            <div class="warning-content">
-              <p>修改高级设置可能影响系统稳定性</p>
-              <p>建议仅在了解技术细节时进行调整</p>
-              <p>重置设置将清除所有自定义配置</p>
-            </div>
-          </div>
-
           <!-- 快捷键提示 -->
           <div class="shortcuts-info">
             <h4 class="shortcuts-title">⌨️ 快捷键</h4>
@@ -545,14 +314,6 @@
               <div class="shortcut-item">
                 <span class="shortcut-key">Ctrl+R</span>
                 <span class="shortcut-desc">重置所有设置</span>
-              </div>
-              <div class="shortcut-item">
-                <span class="shortcut-key">Ctrl+E</span>
-                <span class="shortcut-desc">导出配置</span>
-              </div>
-              <div class="shortcut-item">
-                <span class="shortcut-key">Ctrl+I</span>
-                <span class="shortcut-desc">导入配置</span>
               </div>
             </div>
           </div>
@@ -567,8 +328,8 @@
             <button class="action-button" @click="resetCurrentCategory">
               🔄 重置当前
             </button>
-            <button class="action-button" @click="showHelp">
-              ❓ 帮助
+            <button class="action-button" @click="goBack">
+              ← 返回主界面
             </button>
           </div>
         </div>
@@ -578,90 +339,78 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 设置分类
 const categories = [
-  { id: 'general', name: '常规设置', icon: '🎛️' },
-  { id: 'simulation', name: '模拟参数', icon: '🔬' },
+  { id: 'general', name: '通用设置', icon: '🎛️' },
+  { id: 'calculation', name: '计算设置', icon: '🔬' },
   { id: 'data', name: '数据管理', icon: '💾' },
   { id: 'display', name: '显示设置', icon: '🎨' },
-  { id: 'notifications', name: '通知设置', icon: '🔔' },
-  { id: 'advanced', name: '高级设置', icon: '🔧' }
+  { id: 'about', name: '关于', icon: 'ℹ️' }
 ]
 
 // 当前活动分类
 const activeCategory = ref('general')
 
-// 常规设置
+// 通用设置
 const settings = reactive({
   language: 'zh',
   theme: 'dark',
-  density: 'normal',
-  animations: true,
-  sounds: false
+  animations: true
 })
 
-// 模拟参数设置
-const simulationSettings = reactive({
-  defaultTimeStep: 'yearly',
-  defaultResolution: 'medium',
+// 计算设置
+const calculationSettings = reactive({
+  defaultYears: 100,
+  integrationMethod: 'runge_kutta',
   tolerance: 0.001,
-  maxIterations: 1000,
-  parallelComputing: true,
-  parallelCores: 4
+  autoCalculate: true
 })
 
 // 数据管理设置
 const dataSettings = reactive({
   autoSave: true,
-  saveInterval: 10,
-  caching: true,
   historyLimit: 100,
-  exportFormat: 'excel'
+  exportFormat: 'json'
 })
 
 // 显示设置
 const displaySettings = reactive({
   temperatureUnit: 'celsius',
-  energyUnit: 'kwh',
-  chartStyle: 'modern',
-  colorScheme: 'tech',
+  decimalPlaces: 4,
   gridDensity: 'medium'
 })
 
-// 通知设置
-const notificationSettings = reactive({
-  simulationComplete: true,
-  errors: true,
-  updates: false,
-  methods: ['desktop']
+// 组件挂载时加载设置
+onMounted(() => {
+  loadSettings()
 })
 
-// 高级设置
-const advancedSettings = reactive({
-  developerMode: false,
-  debugLogging: false,
-  hardwareAcceleration: true,
-  memoryLimit: 8,
-  apiEndpoint: 'http://localhost:8000',
-  proxy: ''
-})
-
-// 颜色方案
-const colorSchemes = [
-  { id: 'tech', name: '科技', preview: 'linear-gradient(135deg, #667eea, #764ba2)' },
-  { id: 'nature', name: '自然', preview: 'linear-gradient(135deg, #11998e, #38ef7d)' },
-  { id: 'warm', name: '暖色', preview: 'linear-gradient(135deg, #f093fb, #f5576c)' },
-  { id: 'cool', name: '冷色', preview: 'linear-gradient(135deg, #4facfe, #00f2fe)' }
-]
+// 加载设置
+const loadSettings = () => {
+  try {
+    const saved = localStorage.getItem('userSettings')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (parsed.general) Object.assign(settings, parsed.general)
+      if (parsed.calculation) Object.assign(calculationSettings, parsed.calculation)
+      if (parsed.data) Object.assign(dataSettings, parsed.data)
+      if (parsed.display) Object.assign(displaySettings, parsed.display)
+    }
+  } catch (error) {
+    console.error('加载设置失败:', error)
+  }
+}
 
 // 获取语言名称
 const getLanguageName = (code) => {
   const names = {
     zh: '简体中文',
-    en: 'English',
-    ja: '日本語'
+    en: 'English'
   }
   return names[code] || code
 }
@@ -670,8 +419,7 @@ const getLanguageName = (code) => {
 const getThemeName = (id) => {
   const names = {
     dark: '深色科技风',
-    light: '浅色简约风',
-    auto: '跟随系统'
+    light: '浅色简约风'
   }
   return names[id] || id
 }
@@ -690,19 +438,13 @@ const getUnitName = (id) => {
 const saveAllSettings = () => {
   const allSettings = {
     general: settings,
-    simulation: simulationSettings,
+    calculation: calculationSettings,
     data: dataSettings,
-    display: displaySettings,
-    notifications: notificationSettings,
-    advanced: advancedSettings
+    display: displaySettings
   }
 
-  // 保存到本地存储
   localStorage.setItem('userSettings', JSON.stringify(allSettings))
-  console.log('设置已保存:', allSettings)
-
-  // 显示保存成功提示
-  showNotification('设置已保存成功')
+  alert('设置已保存成功！')
 }
 
 // 重置当前分类设置
@@ -712,31 +454,50 @@ const resetCurrentCategory = () => {
       Object.assign(settings, {
         language: 'zh',
         theme: 'dark',
-        density: 'normal',
-        animations: true,
-        sounds: false
+        animations: true
       })
       break
-    case 'simulation':
-      Object.assign(simulationSettings, {
-        defaultTimeStep: 'yearly',
-        defaultResolution: 'medium',
+    case 'calculation':
+      Object.assign(calculationSettings, {
+        defaultYears: 100,
+        integrationMethod: 'runge_kutta',
         tolerance: 0.001,
-        maxIterations: 1000,
-        parallelComputing: true,
-        parallelCores: 4
+        autoCalculate: true
       })
       break
-    // 其他分类...
+    case 'data':
+      Object.assign(dataSettings, {
+        autoSave: true,
+        historyLimit: 100,
+        exportFormat: 'json'
+      })
+      break
+    case 'display':
+      Object.assign(displaySettings, {
+        temperatureUnit: 'celsius',
+        decimalPlaces: 4,
+        gridDensity: 'medium'
+      })
+      break
   }
-  showNotification('当前分类设置已重置')
+  alert('当前分类设置已重置！')
 }
 
 // 重置所有设置
 const resetAllSettings = () => {
   if (confirm('确定要重置所有设置吗？此操作不可撤销。')) {
     localStorage.removeItem('userSettings')
-    location.reload()
+    loadSettings()
+    alert('所有设置已重置！')
+  }
+}
+
+// 清除所有历史数据
+const clearAllHistory = () => {
+  if (confirm('确定要删除所有历史模拟记录吗？此操作不可撤销。')) {
+    localStorage.removeItem('calculation_results')
+    localStorage.removeItem('simulation_history')
+    alert('所有历史数据已清除！')
   }
 }
 
@@ -744,11 +505,9 @@ const resetAllSettings = () => {
 const exportSettings = () => {
   const allSettings = {
     general: settings,
-    simulation: simulationSettings,
+    calculation: calculationSettings,
     data: dataSettings,
-    display: displaySettings,
-    notifications: notificationSettings,
-    advanced: advancedSettings
+    display: displaySettings
   }
 
   const dataStr = JSON.stringify(allSettings, null, 2)
@@ -760,7 +519,7 @@ const exportSettings = () => {
   a.click()
   URL.revokeObjectURL(url)
 
-  showNotification('设置配置已导出')
+  alert('设置配置已导出！')
 }
 
 // 导入设置
@@ -774,17 +533,15 @@ const importSettings = () => {
     reader.onload = (event) => {
       try {
         const imported = JSON.parse(event.target.result)
-        // 应用导入的设置
         if (imported.general) Object.assign(settings, imported.general)
-        if (imported.simulation) Object.assign(simulationSettings, imported.simulation)
+        if (imported.calculation) Object.assign(calculationSettings, imported.calculation)
         if (imported.data) Object.assign(dataSettings, imported.data)
         if (imported.display) Object.assign(displaySettings, imported.display)
-        if (imported.notifications) Object.assign(notificationSettings, imported.notifications)
-        if (imported.advanced) Object.assign(advancedSettings, imported.advanced)
 
-        showNotification('设置配置已导入')
+        saveAllSettings()
+        alert('设置配置已导入！')
       } catch (error) {
-        showNotification('导入失败：配置文件格式错误')
+        alert('导入失败：配置文件格式错误')
       }
     }
     reader.readAsText(file)
@@ -792,15 +549,9 @@ const importSettings = () => {
   input.click()
 }
 
-// 显示帮助
-const showHelp = () => {
-  showNotification('帮助文档正在准备中...')
-}
-
-// 显示通知
-const showNotification = (message) => {
-  // 这里可以集成通知系统
-  console.log('通知:', message)
+// 返回主界面
+const goBack = () => {
+  router.push('/')
 }
 </script>
 
@@ -808,10 +559,11 @@ const showNotification = (message) => {
 .settings-page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
+  gap: 24px;
+  padding: 24px;
   height: 100%;
   overflow-y: auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .page-header {
@@ -821,72 +573,73 @@ const showNotification = (message) => {
 .page-title {
   font-size: 28px;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--color-cyan), var(--color-blue));
+  background: linear-gradient(135deg, #00d9ff, #4a9eff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 8px;
+  color: white;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: var(--text-tertiary);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .settings-content {
   display: grid;
   grid-template-columns: 240px 1fr 320px;
-  gap: var(--spacing-md);
+  gap: 16px;
   flex: 1;
   min-height: 0;
 }
 
 .panel-section {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
 .section-title {
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-cyan);
-  margin-bottom: var(--spacing-md);
+  color: #4a9eff;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .setting-categories {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .category-button {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--bg-card);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 8px;
+  color: #4a5568;
   font-size: 13px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
   text-align: left;
 }
 
 .category-button:hover {
-  background: var(--bg-hover);
-  border-color: var(--color-blue);
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #4a9eff;
 }
 
 .category-button.active {
-  background: var(--color-blue);
-  border-color: var(--color-blue);
+  background: linear-gradient(135deg, #4a9eff, #00d9ff);
+  border-color: transparent;
   color: white;
 }
 
@@ -897,53 +650,48 @@ const showNotification = (message) => {
 .quick-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .quick-action {
-  padding: var(--spacing-sm);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
+  padding: 8px;
+  background: white;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 6px;
+  color: #4a5568;
   font-size: 12px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .quick-action:hover {
-  background: var(--bg-hover);
-  border-color: var(--color-blue);
-  color: var(--text-primary);
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #4a9eff;
+  color: #2d3748;
 }
 
 .setting-group {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 24px;
 }
 
 .setting-group-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--color-cyan);
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--border-primary);
+  color: #00d9ff;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md);
-  background: var(--bg-card);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-sm);
-}
-
-.setting-item.sub-setting {
-  margin-left: var(--spacing-lg);
-  border-left: 2px solid var(--border-secondary);
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
 .setting-info {
@@ -954,37 +702,37 @@ const showNotification = (message) => {
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #2d3748;
   margin-bottom: 4px;
 }
 
 .setting-description {
   display: block;
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: #718096;
 }
 
 .setting-select,
 .tech-input {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 6px;
+  color: #2d3748;
   font-size: 13px;
-  min-width: 150px;
+  min-width: 120px;
 }
 
 .number-input {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .input-unit {
   font-size: 11px;
-  color: var(--text-tertiary);
-  min-width: 40px;
+  color: #718096;
+  min-width: 30px;
 }
 
 /* 开关样式 */
@@ -1008,10 +756,10 @@ const showNotification = (message) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
+  background-color: white;
+  border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 12px;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .toggle-slider:before {
@@ -1021,14 +769,14 @@ const showNotification = (message) => {
   width: 18px;
   left: 2px;
   bottom: 2px;
-  background-color: var(--text-tertiary);
+  background-color: #718096;
   border-radius: 50%;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: var(--color-cyan);
-  border-color: var(--color-cyan);
+  background-color: #00d9ff;
+  border-color: #00d9ff;
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -1036,204 +784,167 @@ const showNotification = (message) => {
   background-color: white;
 }
 
-.color-options {
-  display: flex;
-  gap: var(--spacing-sm);
+.danger-button {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #ff5747, #ffa947);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.color-option {
-  flex: 1;
-  height: 32px;
-  border: 2px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  font-size: 11px;
-  color: white;
-  cursor: pointer;
-  transition: all var(--transition-fast);
+.danger-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 87, 71, 0.3);
+}
+
+.about-info {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.about-label {
+  color: #718096;
   font-weight: 600;
 }
 
-.color-option:hover {
-  border-color: var(--color-blue);
-}
-
-.color-option.active {
-  border-color: white;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.notification-methods {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.method-checkbox {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-size: 13px;
-  color: var(--text-secondary);
+.about-value {
+  color: #00d9ff;
+  font-weight: 600;
 }
 
 .settings-summary {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 16px;
 }
 
 .summary-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-cyan);
-  margin-bottom: var(--spacing-md);
+  color: #00d9ff;
+  margin-bottom: 12px;
 }
 
 .summary-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .summary-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm);
-  background: var(--bg-primary);
-  border-radius: var(--radius-sm);
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
   font-size: 12px;
 }
 
 .summary-label {
-  color: var(--text-tertiary);
+  color: #718096;
 }
 
 .summary-value {
-  color: var(--color-cyan);
+  color: #00d9ff;
   font-weight: 600;
-}
-
-.config-info {
-  margin-bottom: var(--spacing-lg);
-}
-
-.info-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-cyan);
-  margin-bottom: var(--spacing-md);
-}
-
-.info-details {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-}
-
-.info-label {
-  color: var(--text-tertiary);
-}
-
-.info-value {
-  color: var(--text-secondary);
-}
-
-.reset-warning {
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-md);
-  background: rgba(255, 157, 0, 0.1);
-  border: 1px solid var(--color-orange);
-  border-radius: var(--radius-md);
-}
-
-.warning-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-orange);
-  margin-bottom: var(--spacing-md);
-}
-
-.warning-content {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.warning-content p {
-  margin-bottom: var(--spacing-xs);
 }
 
 .shortcuts-info {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 16px;
 }
 
 .shortcuts-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-cyan);
-  margin-bottom: var(--spacing-md);
+  color: #00d9ff;
+  margin-bottom: 12px;
 }
 
 .shortcuts-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .shortcut-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 12px;
   font-size: 12px;
 }
 
 .shortcut-key {
   padding: 2px 8px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-  color: var(--color-cyan);
+  background: white;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 4px;
+  color: #00d9ff;
   font-family: monospace;
   font-weight: 600;
 }
 
 .shortcut-desc {
-  color: var(--text-secondary);
+  color: #4a5568;
 }
 
 .settings-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .action-button {
-  padding: var(--spacing-sm);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
+  padding: 8px;
+  background: rgba(245, 247, 250, 0.8);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 6px;
+  color: #2d3748;
   font-size: 13px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .action-button:hover {
-  background: var(--bg-hover);
-  border-color: var(--color-blue);
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #4a9eff;
 }
 
 .action-button.primary {
-  background: linear-gradient(135deg, var(--color-blue), var(--color-cyan));
+  background: linear-gradient(135deg, #4a9eff, #00d9ff);
   border-color: transparent;
-  color: var(--bg-primary);
+  color: white;
+}
+
+/* 响应式适配 */
+@media (max-width: 1200px) {
+  .settings-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .categories-panel {
+    order: 1;
+  }
+
+  .settings-panel {
+    order: 2;
+  }
+
+  .preview-panel {
+    order: 3;
+  }
 }
 </style>

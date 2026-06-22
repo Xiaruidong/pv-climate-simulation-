@@ -5,10 +5,56 @@
   box-sizing: border-box;
 }
 
+/* CSS变量定义 */
+:root {
+  /* 颜色系统 */
+  --color-cyan: #00d9ff;
+  --color-blue: #4a9eff;
+  --color-purple: #764ba2;
+  --color-green: #4ad97f;
+  --color-orange: #ffa947;
+  --color-red: #ff5747;
+
+  /* 背景颜色 */
+  --bg-primary: rgba(255, 255, 255, 0.95);
+  --bg-secondary: rgba(245, 247, 250, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-hover: rgba(102, 126, 234, 0.1);
+  --bg-tertiary: rgba(245, 247, 250, 0.8);
+
+  /* 边框颜色 */
+  --border-primary: rgba(102, 126, 234, 0.2);
+  --border-secondary: rgba(118, 75, 162, 0.1);
+
+  /* 文字颜色 */
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+
+  /* 间距系统 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* 过渡 */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
 body {
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow: hidden;
+  color: var(--text-primary);
 }
 
 #app {
