@@ -1049,8 +1049,9 @@ const importSettings = () => {
 
 // 返回主界面
 const goBack = () => {
-  activeCategory.value = 'general'
-  showNotification('已返回主设置页面', 'info')
+  // 触发返回主界面事件
+  window.dispatchEvent(new CustomEvent('navigateToDashboard'))
+  showNotification('正在返回主界面...', 'info')
 }
 </script>
 

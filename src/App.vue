@@ -169,6 +169,18 @@ onMounted(() => {
   setTimeout(() => {
     showNotification('info', '欢迎使用光伏热效应模拟器 - 已加载真实物理常数', '👋')
   }, 1000)
+
+  // 监听设置页面的导航事件
+  window.addEventListener('navigateToDashboard', () => {
+    currentPage.value = 'dashboard'
+    showNotification('info', '已返回主界面', '🏠')
+  })
+
+  // 监听设置更新事件
+  window.addEventListener('settingsUpdated', (event) => {
+    console.log('设置已更新:', event.detail)
+    showNotification('success', '系统设置已更新', '✨')
+  })
 })
 </script>
 
