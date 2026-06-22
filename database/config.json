@@ -1,0 +1,31 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "",
+    "database": "pv_climate_simulation",
+    "charset": "utf8mb4"
+  },
+  "api": {
+    "host": "localhost",
+    "port": 5000,
+    "debug": true,
+    "cors_enabled": true
+  },
+  "features": {
+    "auto_save": true,
+    "auto_tag": true,
+    "cache_enabled": true,
+    "batch_operations": true,
+    "export_formats": ["json", "csv"],
+    "comparison_enabled": true
+  },
+  "limits": {
+    "max_simulations": 10000,
+    "max_comparison_items": 10,
+    "max_export_records": 1000,
+    "query_timeout": 30,
+    "max_upload_size": 10485760
+  }
+}

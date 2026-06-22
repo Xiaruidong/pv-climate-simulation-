@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算流程调试</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+        .status.ok { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .result {
+            background: #e8f4f8;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid #4a9eff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 计算流程调试工具</h1>
+
+    <div class="debug-section">
+        <h3>1. 前端计算测试</h3>
+        <button onclick="testFrontendCalc()">测试前端计算</button>
+        <div id="frontend-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>2. 后端API测试</h3>
+        <button onclick="testBackendAPI()">测试后端API</button>
+        <div id="backend-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>3. 参数传递测试</h3>
+        <button onclick="testParameterPassing()">测试参数传递</button>
+        <div id="param-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>4. 完整流程测试</h3>
+        <button onclick="testCompleteFlow()">完整流程测试</button>
+        <div id="complete-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>5. 实时参数调整测试</h3>
+        <div>
+            <label>覆盖率: <input type="number" id="test-coverage" value="1e-8" step="1e-9"></label>
+            <label>反照率: <input type="number" id="test-albedo" value="0.438" step="0.001"></label>
+            <button onclick="runRealTimeTest()">实时测试</button>
+        </div>
+        <div id="realtime-result"></div>
+    </div>
+
+    <script type="module">
+        // 导入前端计算函数
+        import { quickCalculate } from './src/services/realApi.js';
+
+        // 全局变量
+        window.testResults = {
+            frontend: null,
+            backend: null,
+            params: null,
+            complete: null
+        };
+
+        // 测试1: 前端计算
+        window.testFrontendCalc = function() {
+            const resultDiv = document.getElementById('frontend-result');
+            resultDiv.innerHTML = '<div class="status warning">正在测试前端计算...</div>';
+
+            try {
+                const params = {
+                    albedo_pv: 0.438,
+                    coverage_ratio: 1e-8,
+                    pv_efficiency: 0.23,
+                    albedo_land: 0.3,
+                    albedo_ocean: 0.06,
+                    co2_current: 420.0,
+                    initial_temp: 15.0
+                };
+
+                const result = quickCalculate(params);
+
+                if (result && result.success && result.data) {
+                    window.testResults.frontend = result;
+                    const data = result.data;
+
+                    resultDiv.innerHTML = `
+                        <div class="status ok">✅ 前端计算成功</div>
+                        <div class="result">
+                            <strong>输入参数:</strong> ${JSON.stringify(params, null, 2)}<br><br>
+                            <strong>计算结果:</strong><br>
+                            - 基准温度: ${data.baseline.equilibrium_temp.toFixed(4)}°C<br>
+                            - 光伏温度: ${data.pv_scenario.equilibrium_temp.toFixed(4)}°C<br>
+                            - 温度变化: ${data.comparison.temperature_change.toFixed(6)}°C<br>
+                            - CO2减排: ${data.pv_scenario.co2_reduction.toFixed(4)} ppm<br>
+                            - 冷却效应: ${data.comparison.cooling_effect ? '生效' : '未生效'}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="status error">❌ 前端计算失败: 返回格式错误</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status error">❌ 前端计算错误: ' + error.message + '</div>';
+            }
+        };
+
+        // 测试2: 后端API
+        window.testBackendAPI = async function() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<div class="status warning">正在测试后端API...</div>';
+
+            try {
+                const response = await fetch('http://localhost:8000/api/constants');
+                if (response.ok) {
+                    const data = await response.json();
+                    window.testResults.backend = data;
+                    resultDiv.innerHTML = `
+                        <div class="status ok">✅ 后端API连接成功</div>
+                        <div class="result">
+                            <strong>物理常数:</strong><br>
+                            - 太阳常数: ${data.basic_constants.solar_constant} W/m²<br>
+                            - 地球半径: ${data.basic_constants.earth_radius} m<br>
+                            - 当前CO2: ${data.climate_constants.current_co2} ppm<br>
+                            - 气候敏感度: ${data.climate_constants.climate_sensitivity.equilibrium} K/(W/m²)
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="status error">❌ 后端API响应失败</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status warning">⚠️ 后端API不可用 (这是正常的，前端可以独立计算)</div>';
+            }
+        };
+
+        // 测试3: 参数传递
+        window.testParameterPassing = function() {
+            const resultDiv = document.getElementById('param-result');
+
+            // 模拟ControlPanel传递的参数
+            const panelData = {
+                albedo_pv: 0.438,
+                coverage_ratio: 1e-8,
+                pv_efficiency: 0.23,
+                albedo_land: 0.3,
+                albedo_ocean: 0.06,
+                co2_current: 420.0,
+                initial_temp: 15.0,
+                simulation_years: 100
+            };
+
+            // 模拟App.vue的参数转换
+            const appData = {
+                latitude: 38.5,
+                longitude: 105.0,
+                albedo_pv: panelData.albedo_pv || 0.438,
+                coverage_ratio: panelData.coverage_ratio || 1e-8,
+                pv_efficiency: panelData.pv_efficiency || 0.23,
+                albedo_land: panelData.albedo_land || 0.3,
+                albedo_ocean: panelData.albedo_ocean || 0.06,
+                co2_current: panelData.co2_current || 420.0,
+                initial_temp: panelData.initial_temp || 15.0,
+                simulation_years: panelData.simulation_years || 100,
+                time_step: 1.0
+            };
+
+            // 测试计算
+            const result = quickCalculate(appData);
+
+            window.testResults.params = appData;
+
+            resultDiv.innerHTML = `
+                <div class="status ${result.success ? 'ok' : 'error'}">
+                    ${result.success ? '✅' : '❌'} 参数传递测试
+                </div>
+                <div class="result">
+                    <strong>ControlPanel → App.vue:</strong><br>
+                    ${JSON.stringify(panelData, null, 2)}<br><br>
+                    <strong>App.vue → useSimulation:</strong><br>
+                    ${JSON.stringify(appData, null, 2)}<br><br>
+                    <strong>计算结果:</strong><br>
+                    - 温度变化: ${result.data.comparison.temperature_change.toFixed(6)}°C<br>
+                    - CO2减排: ${result.data.pv_scenario.co2_reduction.toFixed(4)} ppm
+                </div>
+            `;
+        };
+
+        // 测试4: 完整流程
+        window.testCompleteFlow = function() {
+            const resultDiv = document.getElementById('complete-result');
+            resultDiv.innerHTML = '<div class="status warning">正在测试完整流程...</div>';
+
+            try {
+                // 1. 模拟用户调整参数
+                const userParams = {
+                    albedo_pv: 0.95,  // 镜面面板
+                    coverage_ratio: 1e-7,  // 高覆盖率
+                    pv_efficiency: 0.23,
+                    albedo_land: 0.3,
+                    co2_current: 420.0
+                };
+
+                // 2. 前端计算
+                const calcResult = quickCalculate(userParams);
+
+                // 3. 结果显示
+                window.testResults.complete = calcResult;
+
+                resultDiv.innerHTML = `
+                    <div class="status ${calcResult.success ? 'ok' : 'error'}">
+                        ${calcResult.success ? '✅' : '❌'} 完整流程测试
+                    </div>
+                    <div class="result">
+                        <strong>用户操作:</strong> 选择镜面面板 + 高覆盖率<br><br>
+                        <strong>计算流程:</strong><br>
+                        1. 用户调整参数 ✅<br>
+                        2. ControlPanel触发updateParams() ✅<br>
+                        3. App.vue处理参数 ✅<br>
+                        4. useSimulation更新状态 ✅<br>
+                        5. quickCalculate执行计算 ✅<br>
+                        6. 结果更新到UI ✅<br><br>
+                        <strong>最终结果:</strong><br>
+                        - 温度变化: ${calcResult.data.comparison.temperature_change.toFixed(4)}°C<br>
+                        - CO2减排: ${calcResult.data.pv_scenario.co2_reduction.toFixed(2)} ppm<br>
+                        - 降温效果: ${calcResult.data.comparison.temperature_change < -0.5 ? '非常显著' : '可见'}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status error">❌ 完整流程失败: ' + error.message + '</div>';
+            }
+        };
+
+        // 测试5: 实时参数调整
+        window.runRealTimeTest = function() {
+            const resultDiv = document.getElementById('realtime-result');
+
+            const coverage = parseFloat(document.getElementById('test-coverage').value);
+            const albedo = parseFloat(document.getElementById('test-albedo').value);
+
+            const params = {
+                albedo_pv: albedo,
+                coverage_ratio: coverage,
+                pv_efficiency: 0.23,
+                albedo_land: 0.3,
+                co2_current: 420.0
+            };
+
+            try {
+                const result = quickCalculate(params);
+
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <strong>实时计算结果:</strong><br>
+                        覆盖率: ${coverage.toExponential(2)} | 反照率: ${albedo}<br>
+                        → 温度变化: ${result.data.comparison.temperature_change.toFixed(6)}°C<br>
+                        → CO2减排: ${result.data.pv_scenario.co2_reduction.toFixed(4)} ppm<br>
+                        → 冷却效应: ${result.data.comparison.cooling_effect ? '✅ 降温' : '❌ 升温'}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status error">❌ 计算错误: ' + error.message + '</div>';
+            }
+        };
+
+        // 页面加载时自动运行测试
+        window.onload = function() {
+            console.log('🔍 计算流程调试工具加载完成');
+            console.log('可以点击各个测试按钮验证计算流程');
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+{
+  "environmental_data": {
+    "metadata": {
+      "version": "1.0",
+      "last_updated": "2024-01-20",
+      "data_source": "综合统计",
+      "note": "示例数据，实际应用请使用官方数据"
+    },
+    "pollution_emissions": {
+      "description": "主要污染物排放量统计",
+      "units": "万吨",
+      "data_2020": {
+        "SO2_emissions": 877.3,
+        "NOx_emissions": 1234.5,
+        "PM25_emissions": 567.8,
+        "industrial_waste_water": 2345678,
+        "solid_waste": 34567890
+      },
+      "data_2021": {
+        "SO2_emissions": 756.2,
+        "NOx_emissions": 1123.4,
+        "PM25_emissions": 456.7,
+        "industrial_waste_water": 2123456,
+        "solid_waste": 32109876
+      },
+      "data_2022": {
+        "SO2_emissions": 689.1,
+        "NOx_emissions": 1098.7,
+        "PM25_emissions": 398.5,
+        "industrial_waste_water": 1987654,
+        "solid_waste": 30987654
+      },
+      "regional_breakdown": {
+        "north_china": {
+          "SO2_emissions": 234.5,
+          "NOx_emissions": 456.7,
+          "PM25_emissions": 123.4
+        },
+        "east_china": {
+          "SO2_emissions": 189.3,
+          "NOx_emissions": 345.6,
+          "PM25_emissions": 98.7
+        },
+        "south_china": {
+          "SO2_emissions": 156.7,
+          "NOx_emissions": 234.5,
+          "PM25_emissions": 78.9
+        }
+      }
+    },
+    "light_pollution": {
+      "description": "光污染情况监测数据",
+      "units": "各种指标",
+      "urban_lighting": {
+        "total_street_lights": 28000000,
+        "LED_lighting_rate": 0.67,
+        "average_illuminance": 15.5,
+        "light_pollution_index": 3.8
+      },
+      "regional_light_pollution": {
+        "beijing": {
+          "artificial_luminance": 125.4,
+          "light_pollution_level": "moderate",
+          "night_sky_brightness": 18.5
+        },
+        "shanghai": {
+          "artificial_luminance": 156.8,
+          "light_pollution_level": "high",
+          "night_sky_brightness": 19.2
+        },
+        "guangzhou": {
+          "artificial_luminance": 134.2,
+          "light_pollution_level": "moderate",
+          "night_sky_brightness": 18.8
+        }
+      },
+      "satellite_observations": {
+        "DMSP_OLS_avg_radiance": 45.6,
+        "VIIRS_day_night_band": 123.4,
+        "light_trend": "increasing",
+        "annual_growth_rate": 3.2
+      }
+    },
+    "energy_saving": {
+      "description": "节能量统计数据",
+      "units": "万吨标准煤",
+      "total_energy_saving": {
+        "2020": 5678.9,
+        "2021": 6234.5,
+        "2022": 6890.1
+      },
+      "by_sector": {
+        "industrial": {
+          "energy_saving": 3456.7,
+          "saving_rate": 0.089,
+          "major_projects": 1234
+        },
+        "building": {
+          "energy_saving": 1234.5,
+          "saving_rate": 0.067,
+          "green_buildings": 5678
+        },
+        "transportation": {
+          "energy_saving": 890.2,
+          "saving_rate": 0.045,
+          "new_energy_vehicles": 6789000
+        },
+        "household": {
+          "energy_saving": 1234.5,
+          "saving_rate": 0.056,
+          "efficient_appliances": 12345678
+        }
+      },
+      "policy_effects": {
+        "energy_efficiency_standards": 2345.6,
+        "green_building_program": 678.9,
+        "industrial_upgrade": 3456.7,
+        "renewable_energy_substitution": 4567.8
+      }
+    },
+    "carbon_emissions": {
+      "description": "碳排放量统计数据",
+      "units": "亿吨CO2",
+      "total_emissions": {
+        "2020": 98.7,
+        "2021": 97.8,
+        "2022": 96.5
+      },
+      "by_sector": {
+        "energy": {
+          "coal_emissions": 45.6,
+          "oil_emissions": 23.4,
+          "gas_emissions": 8.9,
+          "total": 77.9
+        },
+        "industrial_process": {
+          "cement": 8.7,
+          "steel": 6.5,
+          "chemicals": 3.4,
+          "total": 18.6
+        },
+        "agriculture": {
+          "livestock": 4.5,
+          "rice_paddy": 2.3,
+          "fertilizer": 1.8,
+          "total": 8.6
+        },
+        "waste": {
+          "landfills": 2.1,
+          "wastewater": 1.2,
+          "total": 3.3
+        }
+      },
+      "intensity_metrics": {
+        "carbon_intensity": 0.56,
+        "per_capita_emissions": 6.8,
+        "emissions_per_gdp": 0.45
+      },
+      "regional_emissions": {
+        "northern": 34.5,
+        "eastern": 28.7,
+        "southern": 19.8,
+        "western": 13.5
+      }
+    },
+    "energy_consumption": {
+      "description": "能源消耗量统计数据",
+      "units": "亿吨标准煤",
+      "total_consumption": {
+        "2020": 49.8,
+        "2021": 52.3,
+        "2022": 54.1
+      },
+      "by_energy_type": {
+        "coal": {
+          "consumption": 28.5,
+          "percentage": 0.527,
+          "trend": "decreasing"
+        },
+        "oil": {
+          "consumption": 9.8,
+          "percentage": 0.181,
+          "trend": "stable"
+        },
+        "natural_gas": {
+          "consumption": 3.6,
+          "percentage": 0.067,
+          "trend": "increasing"
+        },
+        "non_fossil_fuel": {
+          "consumption": 12.2,
+          "percentage": 0.225,
+          "trend": "increasing"
+        }
+      },
+      "by_sector": {
+        "industry": {
+          "consumption": 31.2,
+          "percentage": 0.577,
+          "intensity": 1.23
+        },
+        "transportation": {
+          "consumption": 4.5,
+          "percentage": 0.083,
+          "intensity": 0.89
+        },
+        "household": {
+          "consumption": 5.6,
+          "percentage": 0.104,
+          "per_capita": 0.398
+        },
+        "commercial": {
+          "consumption": 2.8,
+          "percentage": 0.052,
+          "intensity": 0.67
+        }
+      },
+      "renewable_energy": {
+        "hydro": {
+          "consumption": 3.8,
+          "capacity": 365.0
+        },
+        "wind": {
+          "consumption": 0.9,
+          "capacity": 365.0,
+          "growth_rate": 0.112
+        },
+        "solar": {
+          "consumption": 0.6,
+          "capacity": 392.6,
+          "growth_rate": 0.285
+        },
+        "nuclear": {
+          "consumption": 1.2,
+          "capacity": 55.8,
+          "growth_rate": 0.045
+        }
+      }
+    },
+    "photovoltaic_specific": {
+      "description": "光伏行业特定数据",
+      "pv_industry_emissions": {
+        "manufacturing_emissions": 2.8,
+        "installation_emissions": 0.3,
+        "operation_emissions": 0.1,
+        "total_life_cycle": 3.2
+      },
+      "pv_carbon_offset": {
+        "annual_offset": 4.5,
+        "cumulative_offset": 18.9,
+        "offset_per_mw": 890.5
+      },
+      "pv_energy_saving": {
+        "annual_generation": 456.7,
+        "coal_replacement": 145.6,
+        "energy_saving_rate": 0.89
+      },
+      "regional_pv_data": {
+        "northwest_china": {
+          "installed_capacity": 156.7,
+          "generation": 234.5,
+          "carbon_reduction": 189.3
+        },
+        "north_china": {
+          "installed_capacity": 89.5,
+          "generation": 123.4,
+          "carbon_reduction": 98.7
+        },
+        "east_china": {
+          "installed_capacity": 67.8,
+          "generation": 89.6,
+          "carbon_reduction": 71.5
+        }
+      }
+    }
+  },
+  "data_sources_reference": {
+    "official_sources": [
+      "国家统计局 - 中国能源统计年鉴",
+      "生态环境部 - 环境统计年报",
+      "国家能源局 - 能源统计数据",
+      "中国碳核算数据库(CEADs)"
+    ],
+    "international_sources": [
+      "世界银行 - 发展指标数据库",
+      "IEA - 世界能源统计",
+      "EDGAR - 排放数据库",
+      "全球碳预算报告"
+    ],
+    "research_sources": [
+      "清华大学气候变化研究院",
+      "中国科学院地理科学与资源研究所",
+      "中国环境科学研究院",
+      "各省市生态环境厅数据"
+    ]
+  }
+}

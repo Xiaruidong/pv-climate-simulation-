@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>参数联动测试工具</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .test-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .test-card h3 {
+            margin-top: 0;
+            color: #4a9eff;
+        }
+        .param-input {
+            margin: 10px 0;
+        }
+        .param-input label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        .param-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .result-display {
+            background: #e8f4f8;
+            border: 1px solid #b8daff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+        }
+        .result-value {
+            font-weight: 600;
+            color: #4a9eff;
+        }
+        .btn {
+            background: #4a9eff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #357abd;
+        }
+        .quick-test {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .quick-test button {
+            margin: 5px;
+            padding: 8px 15px;
+            background: #ffc107;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active { background: #28a745; }
+        .status-inactive { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 参数联动测试工具</h1>
+        <p class="subtitle">测试光伏热效应模拟器的参数响应和计算结果</p>
+
+        <div class="quick-test">
+            <h3>快速测试场景</h3>
+            <button onclick="loadScenario('low_coverage')">低覆盖率 (1e-9)</button>
+            <button onclick="loadScenario('medium_coverage')">中等覆盖率 (1e-8)</button>
+            <button onclick="loadScenario('high_coverage')">高覆盖率 (1e-7)</button>
+            <button onclick="loadScenario('mirror_panel')">镜面面板</button>
+            <button onclick="loadScenario('high_efficiency')">高效率面板</button>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-card">
+                <h3>📊 输入参数</h3>
+                <div class="param-input">
+                    <label>覆盖率 (1e-10 到 1e-6)</label>
+                    <input type="number" id="coverage" value="1e-8" step="1e-9" onchange="calculate()">
+                </div>
+                <div class="param-input">
+                    <label>光伏反照率 (0 到 1)</label>
+                    <input type="number" id="albedo" value="0.438" step="0.001" onchange="calculate()">
+                </div>
+                <div class="param-input">
+                    <label>光伏效率 (0 到 1)</label>
+                    <input type="number" id="efficiency" value="0.23" step="0.01" onchange="calculate()">
+                </div>
+                <div class="param-input">
+                    <label>陆地反照率 (0 到 1)</label>
+                    <input type="number" id="land_albedo" value="0.3" step="0.01" onchange="calculate()">
+                </div>
+                <div class="param-input">
+                    <label>CO2浓度 (ppm, 280-1000)</label>
+                    <input type="number" id="co2" value="420" step="10" onchange="calculate()">
+                </div>
+                <div class="param-input">
+                    <label>初始温度 (°C)</label>
+                    <input type="number" id="initial_temp" value="15" step="1" onchange="calculate()">
+                </div>
+                <button class="btn" onclick="calculate()">🔄 重新计算</button>
+            </div>
+
+            <div class="test-card">
+                <h3>📈 计算结果</h3>
+                <div class="result-display">
+                    <div class="result-item">
+                        <span><span class="status-indicator" id="calc_status"></span>计算状态</span>
+                        <span class="result-value" id="calc_status_text">待计算</span>
+                    </div>
+                    <div class="result-item">
+                        <span>温度变化:</span>
+                        <span class="result-value" id="temp_change">---</span>
+                    </div>
+                    <div class="result-item">
+                        <span>基准温度:</span>
+                        <span class="result-value" id="base_temp">---</span>
+                    </div>
+                    <div class="result-item">
+                        <span>光伏温度:</span>
+                        <span class="result-value" id="pv_temp">---</span>
+                    </div>
+                    <div class="result-item">
+                        <span>CO2减排:</span>
+                        <span class="result-value" id="co2_reduction">---</span>
+                    </div>
+                    <div class="result-item">
+                        <span>反照率变化:</span>
+                        <span class="result-value" id="albedo_change">---</span>
+                    </div>
+                    <div class="result-item">
+                        <span>冷却效应:</span>
+                        <span class="result-value" id="cooling_effect">---</span>
+                    </div>
+                    <div class="result-item">
+                        <span>冷却效率:</span>
+                        <span class="result-value" id="cooling_efficiency">---</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-card">
+            <h3>🔬 测试验证</h3>
+            <div id="validation_results">
+                <p>调整参数后，结果将自动更新并验证合理性...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 物理常数
+        const CONSTANTS = {
+            SOLAR_CONSTANT: 1361.0,
+            LAND_FRACTION: 0.29,
+            OCEAN_FRACTION: 0.71,
+            BASE_OCEAN_ALBEDO: 0.06,
+            PRE_INDUSTRIAL_CO2: 280.0,
+            GRID_EMISSION_FACTOR: 520,
+            AREF: 210.2,
+            B: 2.15
+        };
+
+        // 计算函数
+        function calculate() {
+            try {
+                // 获取参数
+                const coverage = parseFloat(document.getElementById('coverage').value);
+                const albedo_pv = parseFloat(document.getElementById('albedo').value);
+                const efficiency = parseFloat(document.getElementById('efficiency').value);
+                const albedo_land = parseFloat(document.getElementById('land_albedo').value);
+                const co2_current = parseFloat(document.getElementById('co2').value);
+                const initial_temp = parseFloat(document.getElementById('initial_temp').value);
+
+                // 参数验证
+                const validation = validateParams(coverage, albedo_pv, efficiency, albedo_land, co2_current);
+                if (!validation.valid) {
+                    updateCalculationStatus('error', validation.error);
+                    return;
+                }
+
+                // 计算反照率
+                const surface_albedo = CONSTANTS.LAND_FRACTION * albedo_land +
+                                       CONSTANTS.OCEAN_FRACTION * CONSTANTS.BASE_OCEAN_ALBEDO;
+                const base_planetary_albedo = 0.248 + 0.425 * surface_albedo;
+
+                const new_surface_albedo = surface_albedo + (albedo_pv - albedo_land) * coverage * CONSTANTS.LAND_FRACTION;
+                const pv_planetary_albedo = 0.248 + 0.425 * new_surface_albedo;
+
+                // 计算CO2减排
+                const irradiance = 1420;
+                const annual_generation = irradiance * efficiency * 0.8 * 0.8 * 0.96;
+                const land_area_m2 = 1.47921e14 * 1e6;
+                const total_pv_area = land_area_m2 * coverage;
+                const total_generation = annual_generation * total_pv_area;
+                const co2_reduction_kg = total_generation * CONSTANTS.GRID_EMISSION_FACTOR * 0.5 / 1000;
+                const co2_reduction_ppm = Math.max(0, co2_reduction_kg / 2.13e12);
+
+                // 安全限制
+                const safe_co2_reduction = Math.max(0, Math.min(co2_reduction_ppm, co2_current - CONSTANTS.PRE_INDUSTRIAL_CO2));
+
+                // 计算温度
+                const base_flux_in = 0.25 * (1 - base_planetary_albedo) * CONSTANTS.SOLAR_CONSTANT;
+                const co2_forcing = 5.35 * Math.log(co2_current / CONSTANTS.PRE_INDUSTRIAL_CO2);
+                const base_temp = (base_flux_in + co2_forcing - CONSTANTS.AREF) / CONSTANTS.B;
+
+                const pv_flux_in = 0.25 * (1 - pv_planetary_albedo) * CONSTANTS.SOLAR_CONSTANT;
+                const pv_co2_forcing = 5.35 * Math.log(Math.max(co2_current - safe_co2_reduction, CONSTANTS.PRE_INDUSTRIAL_CO2) / CONSTANTS.PRE_INDUSTRIAL_CO2);
+                const pv_temp = (pv_flux_in + pv_co2_forcing - CONSTANTS.AREF) / CONSTANTS.B;
+
+                const temp_change = pv_temp - base_temp;
+
+                // 更新结果显示
+                document.getElementById('temp_change').textContent = temp_change.toFixed(6) + '°C';
+                document.getElementById('base_temp').textContent = base_temp.toFixed(2) + '°C';
+                document.getElementById('pv_temp').textContent = pv_temp.toFixed(2) + '°C';
+                document.getElementById('co2_reduction').textContent = co2_reduction_ppm.toFixed(4) + ' ppm';
+                document.getElementById('albedo_change').textContent = (pv_planetary_albedo - base_planetary_albedo).toExponential(4);
+                document.getElementById('cooling_effect').textContent = temp_change < 0 ? '✅ 降温' : '❌ 升温';
+                document.getElementById('cooling_efficiency').textContent = Math.abs(temp_change * 10).toFixed(2) + '%';
+
+                updateCalculationStatus('active', '计算完成');
+                validateResults(temp_change, co2_reduction_ppm);
+
+            } catch (error) {
+                updateCalculationStatus('error', '计算错误: ' + error.message);
+            }
+        }
+
+        // 参数验证
+        function validateParams(coverage, albedo, efficiency, land_albedo, co2) {
+            if (isNaN(coverage) || coverage < 0 || coverage > 0.01) {
+                return { valid: false, error: '覆盖率必须在 0 到 0.01 之间' };
+            }
+            if (isNaN(albedo) || albedo < 0 || albedo > 1) {
+                return { valid: false, error: '反照率必须在 0 到 1 之间' };
+            }
+            if (isNaN(efficiency) || efficiency < 0 || efficiency > 1) {
+                return { valid: false, error: '效率必须在 0 到 1 之间' };
+            }
+            if (isNaN(co2) || co2 < 280 || co2 > 1000) {
+                return { valid: false, error: 'CO2浓度必须在 280 到 1000 ppm 之间' };
+            }
+            return { valid: true };
+        }
+
+        // 结果验证
+        function validateResults(temp_change, co2_reduction) {
+            const validationDiv = document.getElementById('validation_results');
+            let issues = [];
+            let warnings = [];
+
+            // 温度变化检查
+            if (Math.abs(temp_change) > 10) {
+                issues.push('⚠️ 温度变化过大，可能有计算错误');
+            } else if (Math.abs(temp_change) > 5) {
+                warnings.push('ℹ️ 温度变化较大，请确认参数设置');
+            } else {
+                issues.push('✅ 温度变化在合理范围内');
+            }
+
+            // CO2减排检查
+            if (co2_reduction < 0) {
+                issues.push('⚠️ CO2减排为负数，计算可能有误');
+            } else if (co2_reduction > 1000) {
+                warnings.push('ℹ️ CO2减排量很大，请确认覆盖率设置');
+            } else {
+                issues.push('✅ CO2减排量合理');
+            }
+
+            // 总体评估
+            if (issues.length === 2 && issues[0].includes('✅') && issues[1].includes('✅')) {
+                issues.push('🎉 所有结果验证通过！');
+            }
+
+            validationDiv.innerHTML = '<ul>' + issues.map(i => '<li>' + i + '</li>').join('') +
+                                        warnings.map(w => '<li>' + w + '</li>').join('') + '</ul>';
+        }
+
+        // 更新计算状态
+        function updateCalculationStatus(status, text) {
+            const indicator = document.getElementById('calc_status');
+            const statusText = document.getElementById('calc_status_text');
+
+            indicator.className = 'status-indicator status-' + (status === 'active' ? 'active' : 'inactive');
+            statusText.textContent = text;
+        }
+
+        // 预设场景
+        const scenarios = {
+            low_coverage: {
+                coverage: 1e-9,
+                albedo: 0.438,
+                efficiency: 0.23,
+                land_albedo: 0.3,
+                co2: 420,
+                initial_temp: 15
+            },
+            medium_coverage: {
+                coverage: 1e-8,
+                albedo: 0.438,
+                efficiency: 0.23,
+                land_albedo: 0.3,
+                co2: 420,
+                initial_temp: 15
+            },
+            high_coverage: {
+                coverage: 1e-7,
+                albedo: 0.438,
+                efficiency: 0.23,
+                land_albedo: 0.3,
+                co2: 420,
+                initial_temp: 15
+            },
+            mirror_panel: {
+                coverage: 1e-8,
+                albedo: 0.95,
+                efficiency: 0.23,
+                land_albedo: 0.3,
+                co2: 420,
+                initial_temp: 15
+            },
+            high_efficiency: {
+                coverage: 1e-8,
+                albedo: 0.438,
+                efficiency: 0.25,
+                land_albedo: 0.3,
+                co2: 420,
+                initial_temp: 15
+            }
+        };
+
+        function loadScenario(scenarioName) {
+            const scenario = scenarios[scenarioName];
+            if (scenario) {
+                document.getElementById('coverage').value = scenario.coverage;
+                document.getElementById('albedo').value = scenario.albedo;
+                document.getElementById('efficiency').value = scenario.efficiency;
+                document.getElementById('land_albedo').value = scenario.land_albedo;
+                document.getElementById('co2').value = scenario.co2;
+                document.getElementById('initial_temp').value = scenario.initial_temp;
+                calculate();
+            }
+        }
+
+        // 页面加载时自动计算
+        window.onload = function() {
+            calculate();
+        };
+    </script>
+</body>
+</html>
