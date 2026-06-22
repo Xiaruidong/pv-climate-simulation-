@@ -181,6 +181,24 @@ onMounted(() => {
     console.log('设置已更新:', event.detail)
     showNotification('success', '系统设置已更新', '✨')
   })
+
+  // 监听主题变化事件
+  window.addEventListener('themeChanged', (event) => {
+    console.log('主题已变化:', event.detail.theme)
+    const app = document.querySelector('#app')
+    if (app) {
+      app.classList.remove('light-theme')
+      if (event.detail.theme === 'light') {
+        app.classList.add('light-theme')
+      }
+    }
+  })
+
+  // 监听语言变化事件
+  window.addEventListener('languageChanged', (event) => {
+    console.log('语言已变化:', event.detail.language)
+    showNotification('success', '语言已切换', '🌐')
+  })
 })
 </script>
 
@@ -288,6 +306,45 @@ onMounted(() => {
 .notification-close:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
+}
+
+/* 主题样式 */
+.app-container.light-theme {
+  --bg-primary: rgba(255, 255, 255, 0.95);
+  --bg-secondary: rgba(245, 247, 250, 0.9);
+  --bg-tertiary: rgba(247, 250, 252, 0.8);
+  --text-primary: #1a202c;
+  --text-secondary: #2d3748;
+  --text-tertiary: #4a5568;
+  --border-primary: rgba(0, 0, 0, 0.1);
+  --border-secondary: rgba(0, 0, 0, 0.05);
+  --color-cyan: #008080;
+  --color-blue: #0066cc;
+  --color-purple: #6600cc;
+  --color-green: #006600;
+  --color-orange: #cc6600;
+  --color-red: #cc0000;
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.app-container:not(.light-theme) {
+  --bg-primary: rgba(255, 255, 255, 0.95);
+  --bg-secondary: rgba(245, 247, 250, 0.9);
+  --bg-tertiary: rgba(247, 250, 252, 0.8);
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  --border-primary: rgba(102, 126, 234, 0.2);
+  --border-secondary: rgba(118, 75, 162, 0.1);
+  --color-cyan: #00d9ff;
+  --color-blue: #4a9eff;
+  --color-purple: #764ba2;
+  --color-green: #4ad97f;
+  --color-orange: #ffa947;
+  --color-red: #ff5747;
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* 确保页面填满容器 */

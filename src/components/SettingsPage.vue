@@ -545,6 +545,10 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { useSettings } from '../composables/useSettings'
+
+// 使用全局设置composable
+const { settings: globalSettings, languages, applyTheme } = useSettings()
 
 // 设置分类
 const categories = [
@@ -568,13 +572,8 @@ const storageStats = ref({
   storageHealth: 'good'
 })
 
-// 通用设置
-const settings = reactive({
-  language: 'zh',
-  theme: 'dark',
-  animations: true,
-  autoSave: true
-})
+// 通用设置 - 使用全局设置
+const settings = globalSettings
 
 // 计算设置
 const calculationSettings = reactive({
@@ -796,11 +795,15 @@ const exportAllData = () => {
 
 // 应用设置到当前系统
 const applySettings = () => {
+  // 应用主题
+  applyTheme(settings.theme)
+
   // 触发事件通知其他组件设置已更新
   window.dispatchEvent(new CustomEvent('settingsUpdated', {
     detail: {
       display: displaySettings,
-      calculation: calculationSettings
+      calculation: calculationSettings,
+      general: settings
     }
   }))
 

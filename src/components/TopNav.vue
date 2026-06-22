@@ -1,7 +1,7 @@
 <template>
   <nav class="top-nav">
     <div class="nav-left">
-      <h1 class="software-title">⚡ 光伏热效应模拟器 - 仪表板</h1>
+      <h1 class="software-title">{{ softwareTitle }}</h1>
 
       <div class="nav-tabs">
         <button
@@ -50,7 +50,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useSettings } from '../composables/useSettings'
+
+// 使用设置composable
+const { settings, languages } = useSettings()
 
 // 定义props和emits
 const props = defineProps({
@@ -62,13 +66,21 @@ const props = defineProps({
 
 const emit = defineEmits(['tabChange'])
 
-// 导航标签
-const tabs = [
-  { id: 'dashboard', name: '仪表板' },
-  { id: 'simulation', name: '模拟' },
-  { id: 'history', name: '历史' },
-  { id: 'settings', name: '设置' }
-]
+// 导航标签 - 使用计算属性根据语言设置动态生成
+const tabs = computed(() => [
+  { id: 'dashboard', name: languages[settings.language]['nav.dashboard'] },
+  { id: 'simulation', name: languages[settings.language]['nav.simulation'] },
+  { id: 'history', name: languages[settings.language]['nav.history'] },
+  { id: 'settings', name: languages[settings.language]['nav.settings'] }
+])
+
+// 软件标题 - 根据语言动态变化
+const softwareTitle = computed(() => {
+  if (settings.language === 'en') {
+    return '⚡ PV Climate Effect Simulator - Dashboard'
+  }
+  return '⚡ 光伏热效应模拟器 - 仪表板'
+})
 
 // 浏览器栏URL
 const browserUrl = ref('doshaard dashboard.nci')
@@ -84,7 +96,6 @@ const switchTab = (tabId) => {
 // 显示通知
 const showNotifications = () => {
   console.log('显示通知面板')
-  // 这里可以添加通知面板逻辑
   hasNotifications.value = false
 }
 
@@ -96,197 +107,170 @@ const showSettings = () => {
 // 复制URL
 const copyUrl = () => {
   navigator.clipboard.writeText(browserUrl.value)
-  console.log('URL已复制')
 }
 
 // 刷新页面
 const refreshPage = () => {
   location.reload()
 }
+
+// 监听语言变化事件
+onMounted(() => {
+  window.addEventListener('languageChanged', (event) => {
+    console.log('TopNav收到语言变化事件:', event.detail.language)
+  })
+})
 </script>
 
 <style scoped>
 /* 顶部导航栏样式 */
 .top-nav {
   height: 60px;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-  border-bottom: 1px solid var(--border-primary);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+  border-bottom: 1px solid rgba(102, 126, 234, 0.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-lg);
-  box-shadow: var(--shadow-md);
+  padding: 0 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
   z-index: 100;
+  transition: background 0.3s ease;
+}
+
+.top-nav.light-theme {
+  background: linear-gradient(135deg, rgba(245, 247, 250, 0.9), rgba(195, 207, 226, 0.9));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .nav-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: 24px;
 }
 
 .software-title {
   font-size: 18px;
   font-weight: 600;
-  background: linear-gradient(135deg, var(--color-cyan), var(--color-blue));
+  background: linear-gradient(135deg, #00d9ff, #4a9eff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 20px rgba(74, 158, 255, 0.5);
   letter-spacing: 1px;
   white-space: nowrap;
+  transition: all 0.3s ease;
 }
 
 .nav-tabs {
   display: flex;
-  gap: var(--spacing-xs);
-  background: var(--bg-primary);
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-primary);
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .nav-tab {
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: 14px;
-  color: var(--text-secondary);
+  padding: 8px 16px;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
+  transition: all 0.3s ease;
   white-space: nowrap;
 }
 
 .nav-tab:hover {
-  color: var(--text-primary);
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 .nav-tab.active {
-  color: var(--color-cyan);
-  background: var(--bg-tertiary);
-}
-
-.nav-tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 2px;
-  background: var(--color-cyan);
-  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 16px;
 }
 
 .browser-bar {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  background: var(--bg-primary);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  font-size: 12px;
-  color: var(--text-tertiary);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .browser-bar input {
   background: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: white;
   font-size: 12px;
   width: 180px;
   outline: none;
-  cursor: pointer;
 }
 
-.browser-bar input:focus {
-  color: var(--text-primary);
+.browser-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .browser-action {
   background: transparent;
   border: none;
-  color: var(--text-tertiary);
   cursor: pointer;
   font-size: 14px;
-  padding: 2px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 
 .browser-action:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
+  opacity: 1;
 }
 
 .nav-icon {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
   position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .nav-icon:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--color-blue);
-  box-shadow: var(--shadow-glow-blue);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .notification-badge {
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: 4px;
+  right: 4px;
   width: 8px;
   height: 8px;
-  background: var(--color-red);
+  background: #ff5747;
   border-radius: 50%;
-  border: 1px solid var(--bg-secondary);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.2);
-  }
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.user-info:hover {
-  background: var(--bg-hover);
-  border-color: var(--color-blue);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .user-avatar {
@@ -294,8 +278,19 @@ const refreshPage = () => {
 }
 
 .user-name {
-  font-size: 12px;
-  color: var(--text-secondary);
+  color: white;
+  font-size: 13px;
   font-weight: 500;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .software-title {
+    display: none;
+  }
+
+  .browser-bar {
+    display: none;
+  }
 }
 </style>
