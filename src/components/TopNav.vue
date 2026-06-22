@@ -126,13 +126,13 @@ onMounted(() => {
 /* 顶部导航栏样式 */
 .top-nav {
   height: 60px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
-  border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+  background: #131829;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.3);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   z-index: 100;
   transition: background 0.3s ease;
@@ -141,6 +141,7 @@ onMounted(() => {
 .top-nav.light-theme {
   background: linear-gradient(135deg, rgba(245, 247, 250, 0.9), rgba(195, 207, 226, 0.9));
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .nav-left {

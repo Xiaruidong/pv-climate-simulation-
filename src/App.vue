@@ -329,22 +329,24 @@ onMounted(() => {
 }
 
 .app-container:not(.light-theme) {
-  --bg-primary: rgba(255, 255, 255, 0.95);
-  --bg-secondary: rgba(245, 247, 250, 0.9);
-  --bg-tertiary: rgba(247, 250, 252, 0.8);
-  --text-primary: #2d3748;
-  --text-secondary: #4a5568;
-  --text-tertiary: #718096;
-  --border-primary: rgba(102, 126, 234, 0.2);
-  --border-secondary: rgba(118, 75, 162, 0.1);
+  /* 深色科技风背景色 */
+  --bg-primary: #0a0e27;
+  --bg-secondary: #131829;
+  --bg-tertiary: #1a1f38;
+  --bg-card: #1e2542;
+  --text-primary: #e8ecf4;
+  --text-secondary: #a8b3cf;
+  --text-tertiary: #6a78a0;
+  --border-primary: #2a3a5c;
+  --border-secondary: #3a4a6c;
   --color-cyan: #00d9ff;
   --color-blue: #4a9eff;
   --color-purple: #764ba2;
-  --color-green: #4ad97f;
-  --color-orange: #ffa947;
-  --color-red: #ff5747;
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --color-green: #00ff9d;
+  --color-orange: #ff9d00;
+  --color-red: #ff4757;
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 /* 确保页面填满容器 */

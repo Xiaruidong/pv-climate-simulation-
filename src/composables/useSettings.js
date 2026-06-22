@@ -169,7 +169,7 @@ const applyTheme = (theme) => {
   } else {
     // 深色主题（默认）
     if (body) {
-      body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      body.style.background = '#0a0e27'
     }
     if (app) {
       app.classList.remove('light-theme')
@@ -181,7 +181,7 @@ const applyTheme = (theme) => {
   }
 
   // 通知所有面板更新主题
-  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme }))
+  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme } }))
 }
 
 // 监听设置变化

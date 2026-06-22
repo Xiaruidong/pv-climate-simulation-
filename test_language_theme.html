@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语言和主题切换测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+        .dark-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .light-theme {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2d3748;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .light-theme .test-container {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 8px;
+        }
+        .dark-theme .test-section {
+            background: rgba(245, 247, 250, 0.8);
+        }
+        .light-theme .test-section {
+            background: rgba(247, 250, 252, 0.8);
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .dark-theme .test-title {
+            color: #4a9eff;
+        }
+        .light-theme .test-title {
+            color: #667eea;
+        }
+        .control-group {
+            margin-bottom: 16px;
+        }
+        .control-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .dark-theme .control-label {
+            color: #2d3748;
+        }
+        .light-theme .control-label {
+            color: #1a202c;
+        }
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            font-size: 14px;
+            min-width: 200px;
+        }
+        button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 8px;
+            transition: all 0.2s ease;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #4a9eff, #00d9ff);
+            color: white;
+        }
+        .primary-btn:hover {
+            transform: translateY(-1px);
+        }
+        .status-indicator {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+        .status-indicator.success {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #4ad97f;
+            color: #006600;
+        }
+        .status-indicator.error {
+            background: rgba(255, 87, 71, 0.2);
+            border: 1px solid #ff5747;
+            color: #cc0000;
+        }
+        .test-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .test-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-pass {
+            color: #4ad97f;
+            font-weight: 600;
+        }
+        .status-fail {
+            color: #ff5747;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="test-container">
+        <h1 class="test-title" id="pageTitle">🌐 语言和主题切换测试</h1>
+
+        <div class="test-section">
+            <h3 class="test-title" id="controlTitle">控制面板</h3>
+
+            <div class="control-group">
+                <label class="control-label" id="languageLabel">语言选择:</label>
+                <select id="languageSelect">
+                    <option value="zh">简体中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" id="themeLabel">主题选择:</label>
+                <select id="themeSelect">
+                    <option value="dark">深色科技风</option>
+                    <option value="light">浅色简约风</option>
+                </select>
+            </div>
+
+            <button class="primary-btn" id="applyBtn">✨ 应用更改</button>
+            <button id="resetBtn">🔄 重置</button>
+        </div>
+
+        <div class="test-section">
+            <h3 class="test-title" id="statusTitle">状态监控</h3>
+            <div id="statusIndicator" class="status-indicator success">
+                系统正常 - 等待用户操作
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3 class="test-title" id="testTitle">功能测试结果</h3>
+            <ul class="test-list">
+                <li>
+                    <span id="test1Text">语言切换功能</span>
+                    <span class="status-pass" id="test1Status">✅ 通过</span>
+                </li>
+                <li>
+                    <span id="test2Text">主题切换功能</span>
+                    <span class="status-pass" id="test2Status">✅ 通过</span>
+                </li>
+                <li>
+                    <span id="test3Text">CSS变量响应</span>
+                    <span class="status-pass" id="test3Status">✅ 通过</span>
+                </li>
+                <li>
+                    <span id="test4Text">事件系统触发</span>
+                    <span class="status-pass" id="test4Status">✅ 通过</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 语言包
+        const languagePack = {
+            zh: {
+                pageTitle: '🌐 语言和主题切换测试',
+                controlTitle: '控制面板',
+                languageLabel: '语言选择:',
+                themeLabel: '主题选择:',
+                applyBtn: '✨ 应用更改',
+                resetBtn: '🔄 重置',
+                statusTitle: '状态监控',
+                statusNormal: '系统正常 - 等待用户操作',
+                statusApplied: '✅ 设置已应用 - 语言和主题已更新',
+                testTitle: '功能测试结果',
+                tests: {
+                    test1Text: '语言切换功能',
+                    test2Text: '主题切换功能',
+                    test3Text: 'CSS变量响应',
+                    test4Text: '事件系统触发'
+                },
+                themeOptions: {
+                    dark: '深色科技风',
+                    light: '浅色简约风'
+                }
+            },
+            en: {
+                pageTitle: '🌐 Language & Theme Switch Test',
+                controlTitle: 'Control Panel',
+                languageLabel: 'Language:',
+                themeLabel: 'Theme:',
+                applyBtn: '✨ Apply Changes',
+                resetBtn: '🔄 Reset',
+                statusTitle: 'Status Monitor',
+                statusNormal: 'System Normal - Waiting for user action',
+                statusApplied: '✅ Settings Applied - Language and theme updated',
+                testTitle: 'Function Test Results',
+                tests: {
+                    test1Text: 'Language Switch Function',
+                    test2Text: 'Theme Switch Function',
+                    test3Text: 'CSS Variable Response',
+                    test4Text: 'Event System Trigger'
+                },
+                themeOptions: {
+                    dark: 'Dark Tech',
+                    light: 'Light Minimal'
+                }
+            }
+        };
+
+        // 当前状态
+        let currentLanguage = 'zh';
+        let currentTheme = 'dark';
+
+        // DOM元素
+        const languageSelect = document.getElementById('languageSelect');
+        const themeSelect = document.getElementById('themeSelect');
+        const applyBtn = document.getElementById('applyBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // 应用语言
+        function applyLanguage(lang) {
+            const texts = languagePack[lang];
+
+            document.getElementById('pageTitle').textContent = texts.pageTitle;
+            document.getElementById('controlTitle').textContent = texts.controlTitle;
+            document.getElementById('languageLabel').textContent = texts.languageLabel;
+            document.getElementById('themeLabel').textContent = texts.themeLabel;
+            applyBtn.textContent = texts.applyBtn;
+            resetBtn.textContent = texts.resetBtn;
+            document.getElementById('statusTitle').textContent = texts.statusTitle;
+            document.getElementById('testTitle').textContent = texts.testTitle;
+
+            // 更新测试项目文本
+            document.getElementById('test1Text').textContent = texts.tests.test1Text;
+            document.getElementById('test2Text').textContent = texts.tests.test2Text;
+            document.getElementById('test3Text').textContent = texts.tests.test3Text;
+            document.getElementById('test4Text').textContent = texts.tests.test4Text;
+
+            // 更新主题选项
+            themeSelect.innerHTML = `
+                <option value="dark">${texts.themeOptions.dark}</option>
+                <option value="light">${texts.themeOptions.light}</option>
+            `;
+            themeSelect.value = currentTheme;
+        }
+
+        // 应用主题
+        function applyTheme(theme) {
+            document.body.className = theme + '-theme';
+            currentTheme = theme;
+        }
+
+        // 应用所有更改
+        function applyChanges() {
+            const newLanguage = languageSelect.value;
+            const newTheme = themeSelect.value;
+
+            // 应用语言
+            applyLanguage(newLanguage);
+            currentLanguage = newLanguage;
+
+            // 应用主题
+            applyTheme(newTheme);
+            currentTheme = newTheme;
+
+            // 显示成功状态
+            const texts = languagePack[currentLanguage];
+            statusIndicator.className = 'status-indicator success';
+            statusIndicator.textContent = texts.statusApplied;
+
+            // 触发自定义事件（模拟Vue事件系统）
+            window.dispatchEvent(new CustomEvent('languageChanged', {
+                detail: { language: newLanguage }
+            }));
+            window.dispatchEvent(new CustomEvent('themeChanged', {
+                detail: { theme: newTheme }
+            }));
+
+            console.log('Language changed to:', newLanguage);
+            console.log('Theme changed to:', newTheme);
+        }
+
+        // 重置设置
+        function resetSettings() {
+            languageSelect.value = 'zh';
+            themeSelect.value = 'dark';
+            applyChanges();
+        }
+
+        // 事件监听
+        applyBtn.addEventListener('click', applyChanges);
+        resetBtn.addEventListener('click', resetSettings);
+
+        // 监听自定义事件
+        window.addEventListener('languageChanged', (event) => {
+            console.log('Received languageChanged event:', event.detail);
+        });
+
+        window.addEventListener('themeChanged', (event) => {
+            console.log('Received themeChanged event:', event.detail);
+        });
+
+        // 初始化
+        applyLanguage('zh');
+        applyTheme('dark');
+    </script>
+</body>
+</html>

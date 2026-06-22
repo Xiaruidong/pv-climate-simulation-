@@ -1,9 +1,9 @@
 <template>
-  <div class="settings-page">
+  <div :class="['settings-page', globalSettings.theme === 'light' ? 'light-theme' : 'dark-theme']">
     <!-- 页面标题 -->
     <div class="page-header">
-      <h1 class="page-title">⚙️ 系统设置</h1>
-      <p class="page-subtitle">配置模拟器参数和系统偏好</p>
+      <h1 class="page-title">{{ pageTitle }}</h1>
+      <p class="page-subtitle">{{ pageSubtitle }}</p>
     </div>
 
     <!-- 主要内容区域 -->
@@ -15,7 +15,7 @@
 
           <div class="setting-categories">
             <button
-              v-for="category in categories"
+              v-for="category in categories.value"
               :key="category.id"
               :class="['category-button', { active: activeCategory === category.id }]"
               @click="activeCategory = category.id"
@@ -550,15 +550,26 @@ import { useSettings } from '../composables/useSettings'
 // 使用全局设置composable
 const { settings: globalSettings, languages, applyTheme } = useSettings()
 
-// 设置分类
-const categories = [
-  { id: 'general', name: '通用设置', icon: '🎛️' },
-  { id: 'calculation', name: '计算设置', icon: '🔬' },
-  { id: 'data', name: '数据管理', icon: '💾' },
-  { id: 'display', name: '显示设置', icon: '🎨' },
-  { id: 'storage', name: '存储管理', icon: '📊' },
-  { id: 'about', name: '关于', icon: 'ℹ️' }
-]
+// 设置分类 - 使用计算属性响应语言变化
+const categories = computed(() => [
+  { id: 'general', name: languages[globalSettings.language]['settings.general'], icon: '🎛️' },
+  { id: 'calculation', name: languages[globalSettings.language]['settings.calculation'], icon: '🔬' },
+  { id: 'data', name: languages[globalSettings.language]['settings.data'], icon: '💾' },
+  { id: 'display', name: languages[globalSettings.language]['settings.display'], icon: '🎨' },
+  { id: 'storage', name: languages[globalSettings.language]['settings.storage'], icon: '📊' },
+  { id: 'about', name: languages[globalSettings.language]['settings.about'], icon: 'ℹ️' }
+])
+
+// 页面标题 - 响应语言变化
+const pageTitle = computed(() => {
+  return globalSettings.language === 'en' ? '⚙️ System Settings' : '⚙️ 系统设置'
+})
+
+const pageSubtitle = computed(() => {
+  return globalSettings.language === 'en'
+    ? 'Configure simulator parameters and system preferences'
+    : '配置模拟器参数和系统偏好'
+})
 
 // 当前活动分类
 const activeCategory = ref('general')
@@ -1066,7 +1077,15 @@ const goBack = () => {
   padding: 24px;
   height: 100%;
   overflow-y: auto;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: background 0.3s ease;
+}
+
+.settings-page.dark-theme {
+  background: #0a0e27;
+}
+
+.settings-page.light-theme {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .page-header {
@@ -1076,16 +1095,35 @@ const goBack = () => {
 .page-title {
   font-size: 28px;
   font-weight: 700;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .page-title {
   background: linear-gradient(135deg, #00d9ff, #4a9eff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-  color: white;
+  color: #e8ecf4;
+}
+
+.light-theme .page-title {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #2d3748;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.3s ease;
+}
+
+.dark-theme .page-subtitle {
+  color: #a8b3cf;
+}
+
+.light-theme .page-subtitle {
+  color: #4a5568;
 }
 
 .settings-content {
@@ -1097,21 +1135,38 @@ const goBack = () => {
 }
 
 .panel-section {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .panel-section {
+  background: #1e2542;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.light-theme .panel-section {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
   font-size: 14px;
   font-weight: 600;
-  color: #4a9eff;
   margin-bottom: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .section-title {
+  color: #00d9ff;
+}
+
+.light-theme .section-title {
+  color: #667eea;
 }
 
 .setting-categories {
@@ -1125,25 +1180,48 @@ const goBack = () => {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 8px;
-  color: #4a5568;
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
 }
 
-.category-button:hover {
-  background: rgba(102, 126, 234, 0.1);
+.dark-theme .category-button {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
+  color: #a8b3cf;
+}
+
+.dark-theme .category-button:hover {
+  background: #252d52;
   border-color: #4a9eff;
 }
 
+.light-theme .category-button {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #2d3748;
+}
+
+.light-theme .category-button:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+}
+
 .category-button.active {
-  background: linear-gradient(135deg, #4a9eff, #00d9ff);
   border-color: transparent;
   color: white;
+}
+
+.dark-theme .category-button.active {
+  background: linear-gradient(135deg, #4a9eff, #00d9ff);
+  border-color: transparent;
+  color: #e8ecf4;
+}
+
+.light-theme .category-button.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
 .category-icon {
@@ -1167,10 +1245,28 @@ const goBack = () => {
   transition: all 0.2s ease;
 }
 
-.quick-action:hover {
-  background: rgba(102, 126, 234, 0.1);
+.dark-theme .quick-action {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
+  color: #a8b3cf;
+}
+
+.dark-theme .quick-action:hover {
+  background: #252d52;
   border-color: #4a9eff;
+  color: #e8ecf4;
+}
+
+.light-theme .quick-action {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   color: #2d3748;
+}
+
+.light-theme .quick-action:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+  color: #1a202c;
 }
 
 .quick-action.primary {
@@ -1197,10 +1293,19 @@ const goBack = () => {
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 8px;
   margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .setting-item {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
+}
+
+.light-theme .setting-item {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .setting-info {
@@ -1211,14 +1316,30 @@ const goBack = () => {
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: #2d3748;
   margin-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .setting-label {
+  color: #e8ecf4;
+}
+
+.light-theme .setting-label {
+  color: #1a202c;
 }
 
 .setting-description {
   display: block;
   font-size: 11px;
-  color: #718096;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .setting-description {
+  color: #a8b3cf;
+}
+
+.light-theme .setting-description {
+  color: #4a5568;
 }
 
 .setting-select,
@@ -1230,6 +1351,21 @@ const goBack = () => {
   color: #2d3748;
   font-size: 13px;
   min-width: 120px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .setting-select,
+.dark-theme .tech-input {
+  background: #252d52;
+  border: 1px solid #2a3a5c;
+  color: #e8ecf4;
+}
+
+.light-theme .setting-select,
+.light-theme .tech-input {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #2d3748;
 }
 
 .number-input {
@@ -1271,6 +1407,11 @@ const goBack = () => {
   transition: all 0.2s ease;
 }
 
+.dark-theme .toggle-slider {
+  background-color: #252d52;
+  border: 1px solid #2a3a5c;
+}
+
 .toggle-slider:before {
   position: absolute;
   content: "";
@@ -1281,6 +1422,10 @@ const goBack = () => {
   background-color: #718096;
   border-radius: 50%;
   transition: all 0.2s ease;
+}
+
+.dark-theme .toggle-slider:before {
+  background-color: #a8b3cf;
 }
 
 .toggle-switch input:checked + .toggle-slider {
@@ -1322,20 +1467,41 @@ const goBack = () => {
   flex-direction: column;
   gap: 4px;
   padding: 12px;
-  background: rgba(245, 247, 250, 0.8);
   border-radius: 8px;
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .stat-item {
+  background: #252d52;
+  border: 1px solid #2a3a5c;
 }
 
 .stat-label {
   font-size: 11px;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .stat-label {
+  color: #a8b3cf;
+}
+
+.light-theme .stat-label {
   color: #718096;
 }
 
 .stat-value {
   font-size: 14px;
   font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .stat-value {
   color: #00d9ff;
+}
+
+.light-theme .stat-value {
+  color: #667eea;
 }
 
 .data-operations {
@@ -1364,9 +1530,16 @@ const goBack = () => {
   text-align: left;
 }
 
-.operation-button:hover {
-  background: rgba(102, 126, 234, 0.1);
+.dark-theme .operation-button {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
+  color: #a8b3cf;
+}
+
+.dark-theme .operation-button:hover {
+  background: #252d52;
   border-color: #4a9eff;
+  color: #e8ecf4;
 }
 
 .operation-button.primary {
@@ -1423,19 +1596,40 @@ const goBack = () => {
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .about-item {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
 }
 
 .about-label {
-  color: #718096;
   font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .about-label {
+  color: #a8b3cf;
+}
+
+.light-theme .about-label {
+  color: #718096;
 }
 
 .about-value {
-  color: #00d9ff;
   font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .about-value {
+  color: #00d9ff;
+}
+
+.light-theme .about-value {
+  color: #667eea;
 }
 
 .about-link {
@@ -1470,9 +1664,14 @@ const goBack = () => {
   align-items: center;
   gap: 8px;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.9);
   border-radius: 6px;
   font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .feature-item {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
 }
 
 .feature-icon {
@@ -1480,6 +1679,14 @@ const goBack = () => {
 }
 
 .feature-text {
+  transition: color 0.3s ease;
+}
+
+.dark-theme .feature-text {
+  color: #a8b3cf;
+}
+
+.light-theme .feature-text {
   color: #4a5568;
 }
 
@@ -1506,18 +1713,44 @@ const goBack = () => {
   justify-content: space-between;
   align-items: center;
   padding: 8px;
-  background: white;
   border-radius: 6px;
   font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .summary-item {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
+}
+
+.light-theme .summary-item {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .summary-label {
+  transition: color 0.3s ease;
+}
+
+.dark-theme .summary-label {
+  color: #a8b3cf;
+}
+
+.light-theme .summary-label {
   color: #718096;
 }
 
 .summary-value {
-  color: #00d9ff;
   font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .summary-value {
+  color: #00d9ff;
+}
+
+.light-theme .summary-value {
+  color: #667eea;
 }
 
 .shortcuts-info {
@@ -1546,15 +1779,33 @@ const goBack = () => {
 
 .shortcut-key {
   padding: 2px 8px;
-  background: white;
-  border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 4px;
-  color: #00d9ff;
   font-family: monospace;
   font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .shortcut-key {
+  background: #252d52;
+  border: 1px solid #2a3a5c;
+  color: #00d9ff;
+}
+
+.light-theme .shortcut-key {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #667eea;
 }
 
 .shortcut-desc {
+  transition: color 0.3s ease;
+}
+
+.dark-theme .shortcut-desc {
+  color: #a8b3cf;
+}
+
+.light-theme .shortcut-desc {
   color: #4a5568;
 }
 
@@ -1575,9 +1826,16 @@ const goBack = () => {
   transition: all 0.2s ease;
 }
 
-.action-button:hover {
-  background: rgba(102, 126, 234, 0.1);
+.dark-theme .action-button {
+  background: #1e2542;
+  border: 1px solid #2a3a5c;
+  color: #a8b3cf;
+}
+
+.dark-theme .action-button:hover {
+  background: #252d52;
   border-color: #4a9eff;
+  color: #e8ecf4;
 }
 
 .action-button.primary {
