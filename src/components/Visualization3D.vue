@@ -33,9 +33,7 @@
     </div>
 
     <!-- 底部说明文字 -->
-    <div class="visualization-caption">
-      <span>🎯</span>
-      <span>3D 实时可视化</span>
+    <div class="visualization-caption">      <span>3D 实时可视化</span>
       <span v-if="showRealData" class="live-indicator">● 实时计算</span>
       <span v-else class="demo-indicator">○ 演示模式</span>
       <span style="margin-left: auto;">FPS: {{ fps }}</span>
@@ -47,7 +45,7 @@
         :class="['control-btn', { active: showRealData }]"
         @click="showRealData = !showRealData"
       >
-        {{ showRealData ? '🔬 真实数据' : '🎭 演示模式' }}
+        {{ showRealData ? ' 真实数据' : ' 演示模式' }}
       </button>
       <div v-if="showRealData" class="data-summary">
         <div class="data-item">
@@ -69,7 +67,7 @@
 
     <!-- 参数信息面板 -->
     <div class="params-panel">
-      <div class="panel-title">📊 输入参数</div>
+      <div class="panel-title"> 输入参数</div>
       <div class="params-grid">
         <div class="param-item">
           <span class="param-label">反照率:</span>
@@ -92,7 +90,7 @@
 
     <!-- 计算结果面板 -->
     <div class="results-panel">
-      <div class="panel-title">📈 计算结果</div>
+      <div class="panel-title"> 计算结果</div>
       <div class="results-grid">
         <div class="result-item">
           <span class="result-label">温度变化:</span>
@@ -582,7 +580,7 @@ onUnmounted(() => {
 
 .legend-panel {
   position: absolute;
-  top: var(--spacing-md);
+  bottom: 60px; /* 左下角，位于底部说明文字上方，避免与左上角的输入参数面板重叠 */
   left: var(--spacing-md);
   background: rgba(10, 14, 39, 0.8);
   border: 1px solid var(--border-primary);
@@ -728,6 +726,7 @@ onUnmounted(() => {
 
 .view-controls {
   position: absolute;
+  top: auto; /* 覆盖全局dashboard.css中的top，避免与bottom同时生效导致容器被拉伸 */
   bottom: var(--spacing-md);
   right: var(--spacing-md);
   display: flex;
@@ -835,7 +834,7 @@ onUnmounted(() => {
 
 .results-panel {
   position: absolute;
-  top: 160px;
+  top: 210px; /* 位于输入参数面板（约183px高）下方，避免重叠 */
   left: var(--spacing-md);
   background: rgba(10, 14, 39, 0.9);
   border: 1px solid var(--border-primary);

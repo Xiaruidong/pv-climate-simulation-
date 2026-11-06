@@ -4,7 +4,8 @@
  */
 
 import { ref, reactive, computed } from 'vue'
-import { quickCalculate, defaultParams } from '@/services/realApi'
+import { quickCalculate, defaultParams, runEbmSimulation } from '@/services/realApi'
+import dataService from '@/services/dataService'
 import resultStorage from '@/utils/resultStorage'
 
 // 全局模拟状态
@@ -24,6 +25,9 @@ const simulationState = reactive({
   // 当前场景
   currentScenario: null,
 
+  // 计算来源：'ebm'（后端精确模型）| 'local'（本地简化模型，后端不可用时的回退）
+  calculationSource: null,
+
   // 3D可视化数据
   visualizationData: {
     temperatureField: [],
@@ -41,14 +45,14 @@ const calculationQueue = []
  * 模拟状态管理Composable
  */
 export function useSimulation() {
-  // 更新参数
+  // 更新参数（拖动/交互时的实时预览，用本地简化模型保证即时响应）
   const updateParams = (newParams) => {
     simulationState.params = {
       ...simulationState.params,
       ...newParams
     }
-    // 触发重新计算
-    triggerCalculation()
+    // 实时预览计算（不入库）
+    triggerCalculation(false, { useBackend: false })
   }
 
   // 设置场景
@@ -57,14 +61,36 @@ export function useSimulation() {
     updateParams(scenario.params)
   }
 
-  // 触发计算
-  const triggerCalculation = async (saveResult = true) => {
+  /**
+   * 触发计算
+   * @param {boolean} saveResult - 是否保存结果（正式计算入库，实时预览不入库）
+   * @param {Object} options - { useBackend: 默认true，后端EBM优先，失败回退本地简化模型 }
+   */
+  const triggerCalculation = async (saveResult = true, { useBackend = true } = {}) => {
     simulationState.isCalculating = true
     simulationState.error = null
 
     try {
-      // 使用快速计算（前端实时计算）
-      const result = quickCalculate(simulationState.params)
+      let result = null
+
+      // 优先使用后端EBM精确模型（真实物理常数 + 数值积分）
+      if (useBackend) {
+        try {
+          result = await runEbmSimulation(simulationState.params)
+          if (result.success) {
+            simulationState.calculationSource = 'ebm'
+          }
+        } catch (ebmError) {
+          console.warn('后端EBM计算不可用，回退到本地简化模型:', ebmError.message)
+          result = null
+        }
+      }
+
+      // 回退：本地简化模型（结果结构与EBM一致）
+      if (!result || !result.success) {
+        result = quickCalculate(simulationState.params)
+        simulationState.calculationSource = useBackend ? 'local' : 'local-preview'
+      }
 
       if (result.success) {
         simulationState.results = result.data
@@ -72,14 +98,24 @@ export function useSimulation() {
         // 更新可视化数据
         updateVisualizationData(result.data)
 
-        // 自动保存结果
+        // 自动保存结果（MySQL优先，localStorage兜底）
         if (saveResult) {
-          const resultId = resultStorage.saveResult(
+          const startTime = Date.now()
+          dataService.saveSimulation(
             simulationState.params,
             result.data,
-            simulationState.currentScenario
-          )
-          console.log('计算结果已保存:', resultId)
+            simulationState.currentScenario,
+            {
+              calculationTimeMs: Date.now() - startTime,
+              calculationSource: simulationState.calculationSource
+            }
+          ).then(({ localId, dbRecordId, dbOnline }) => {
+            console.log(
+              dbRecordId
+                ? `计算结果已保存: ${localId} → MySQL(${dbRecordId})`
+                : `计算结果已保存: ${localId}（${dbOnline ? '数据库写入失败，仅本地' : '数据库离线，仅本地'}）`
+            )
+          })
         }
 
         // 触发事件通知其他组件
@@ -221,6 +257,7 @@ export function useSimulation() {
     isCalculating: simulationState.isCalculating,
     error: simulationState.error,
     currentScenario: simulationState.currentScenario,
+    calculationSource: computed(() => simulationState.calculationSource),
     visualizationData: simulationState.visualizationData,
 
     // 计算属性

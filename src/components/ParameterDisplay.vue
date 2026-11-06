@@ -1,7 +1,7 @@
 <template>
   <div class="parameter-display">
     <div class="info-card">
-      <div class="info-card-title">🔧 当前参数</div>
+      <div class="info-card-title"> 当前参数</div>
 
       <div class="parameter-item">
         <span class="parameter-label">面板类型</span>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="info-card">
-      <div class="info-card-title">📐 物理参数</div>
+      <div class="info-card-title"> 物理参数</div>
 
       <div class="parameter-item">
         <span class="parameter-label">陆地反照率</span>
@@ -64,7 +64,7 @@
     </div>
 
     <div class="info-card">
-      <div class="info-card-title">🌏 覆盖面积估算</div>
+      <div class="info-card-title"> 覆盖面积估算</div>
 
       <div class="area-calculation">
         <div class="area-value">

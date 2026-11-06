@@ -1,7 +1,7 @@
 <template>
   <div class="result-summary">
     <div class="info-card">
-      <div class="info-card-title">📈 模拟结果摘要</div>
+      <div class="info-card-title"> 模拟结果摘要</div>
 
       <div v-if="!data" class="no-result">
         <el-icon size="32"><Document /></el-icon>
@@ -61,11 +61,11 @@
 
     <!-- 科学意义 -->
     <div class="info-card">
-      <div class="info-card-title">🔬 科学意义</div>
+      <div class="info-card-title"> 科学意义</div>
 
       <div class="science-points">
         <div class="point-item">
-          <div class="point-icon">🌡️</div>
+          <div class="point-icon"></div>
           <div class="point-text">
             <div class="point-title">气候调节</div>
             <div class="point-desc">反照率效应：高反照率面板可降低地表温度</div>
@@ -73,7 +73,7 @@
         </div>
 
         <div class="point-item">
-          <div class="point-icon">🌿</div>
+          <div class="point-icon"></div>
           <div class="point-text">
             <div class="point-title">碳减排</div>
             <div class="point-desc">光伏发电替代化石燃料，减少温室气体排放</div>
@@ -81,7 +81,7 @@
         </div>
 
         <div class="point-item">
-          <div class="point-icon">⚖️</div>
+          <div class="point-icon"></div>
           <div class="point-text">
             <div class="point-title">双重效应</div>
             <div class="point-desc">新型面板同时产生降温+减排双重气候效益</div>
@@ -92,17 +92,17 @@
 
     <!-- 导出功能 -->
     <div class="info-card">
-      <div class="info-card-title">📥 数据导出</div>
+      <div class="info-card-title"> 数据导出</div>
 
       <div class="export-buttons">
         <button class="export-button" @click="exportData('json')">
-          📄 JSON格式
+           JSON格式
         </button>
         <button class="export-button" @click="exportData('csv')">
-          📊 CSV格式
+           CSV格式
         </button>
         <button class="export-button" @click="exportData('pdf')">
-          📑 PDF报告
+           PDF报告
         </button>
       </div>
     </div>

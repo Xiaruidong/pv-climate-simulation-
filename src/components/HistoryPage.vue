@@ -2,8 +2,8 @@
   <div class="history-page">
     <!-- 页面标题 -->
     <div class="page-header">
-      <h1 class="page-title">📋 历史记录管理</h1>
-      <p class="page-subtitle">查看和管理所有模拟计算的历史记录</p>
+      <h1 class="page-title"> 历史记录管理</h1>
+      <p class="page-subtitle">查看和管理所有模拟计算的历史记录（数据源：{{ dataSourceLabel }}）</p>
     </div>
 
     <!-- 主要内容区域 -->
@@ -11,7 +11,7 @@
       <!-- 左侧：筛选和搜索 -->
       <div class="filter-panel">
         <div class="panel-section">
-          <h3 class="section-title">🔍 筛选条件</h3>
+          <h3 class="section-title"> 筛选条件</h3>
 
           <!-- 搜索框 -->
           <div class="filter-group">
@@ -23,7 +23,7 @@
                 placeholder="输入关键词..."
                 class="search-input"
               />
-              <span class="search-icon">🔍</span>
+              <span class="search-icon"></span>
             </div>
           </div>
 
@@ -85,20 +85,20 @@
           <!-- 操作按钮 -->
           <div class="filter-actions">
             <button class="action-button primary" @click="applyFilters">
-              🔄 应用筛选
+               应用筛选
             </button>
             <button class="action-button" @click="resetFilters">
-              🗑️ 清空筛选
+               清空筛选
             </button>
             <button class="action-button" @click="exportHistory">
-              📥 导出记录
+               导出记录
             </button>
           </div>
         </div>
 
         <!-- 统计信息 -->
         <div class="panel-section">
-          <h3 class="section-title">📊 统计信息</h3>
+          <h3 class="section-title"> 统计信息</h3>
           <div class="stats-grid">
             <div class="stat-item">
               <span class="stat-value">{{ historyStats.total }}</span>
@@ -124,7 +124,7 @@
       <div class="records-panel">
         <div class="panel-section">
           <div class="records-header">
-            <h3 class="section-title">🗂️ 模拟记录</h3>
+            <h3 class="section-title"> 模拟记录</h3>
             <div class="records-actions">
               <span class="records-count">共 {{ filteredRecords.length }} 条记录</span>
               <button
@@ -132,10 +132,10 @@
                 @click="toggleComparisonMode"
                 title="对比模式"
               >
-                📊
+                
               </button>
               <button class="icon-button" @click="toggleViewMode">
-                {{ viewMode === 'grid' ? '☰' : '▦' }}
+                {{ viewMode === 'grid' ? '' : '▦' }}
               </button>
             </div>
           </div>
@@ -162,7 +162,7 @@
                 :disabled="selectedForComparison.length < 2"
                 @click="runComparison"
               >
-                📊 开始对比
+                 开始对比
               </button>
               <button class="comparison-button secondary" @click="toggleComparisonMode">
                 取消
@@ -172,7 +172,7 @@
 
           <!-- 对比结果面板 -->
           <div v-if="comparisonResult" class="comparison-result-panel">
-            <h4 class="comparison-result-title">📊 对比分析结果</h4>
+            <h4 class="comparison-result-title"> 对比分析结果</h4>
             <div class="comparison-results-grid">
               <div class="comparison-result-item">
                 <span class="comparison-result-label">最佳降温效果</span>
@@ -246,19 +246,19 @@
 
               <div class="record-info">
                 <div class="info-item">
-                  <span class="info-icon">📅</span>
+                  <span class="info-icon"></span>
                   <span class="info-text">{{ record.date }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="info-icon">⏱️</span>
+                  <span class="info-icon"></span>
                   <span class="info-text">{{ record.duration }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="info-icon">🎯</span>
+                  <span class="info-icon"></span>
                   <span class="info-text">{{ record.type }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="info-icon">📍</span>
+                  <span class="info-icon"></span>
                   <span class="info-text">{{ record.location }}</span>
                 </div>
               </div>
@@ -278,13 +278,13 @@
 
               <div class="record-actions">
                 <button class="record-action" @click.stop="viewDetails(record)">
-                  👁️ 详情
+                   详情
                 </button>
                 <button class="record-action" @click.stop="duplicateRecord(record)">
-                  📋 复制
+                   复制
                 </button>
                 <button class="record-action danger" @click.stop="deleteRecord(record)">
-                  🗑️ 删除
+                   删除
                 </button>
               </div>
             </div>
@@ -353,7 +353,7 @@
       <!-- 右侧：详情面板 -->
       <div class="details-panel">
         <div v-if="selectedRecord" class="panel-section">
-          <h3 class="section-title">📄 模拟详情</h3>
+          <h3 class="section-title"> 模拟详情</h3>
 
           <!-- 基本信息 -->
           <div class="detail-group">
@@ -439,23 +439,23 @@
           <!-- 操作按钮 -->
           <div class="detail-actions">
             <button class="detail-button primary" @click="rerunSimulation">
-              🔄 重新运行
+               重新运行
             </button>
             <button class="detail-button" @click="exportRecord">
-              📥 导出结果
+               导出结果
             </button>
             <button class="detail-button" @click="shareRecord">
-              🔗 分享记录
+               分享记录
             </button>
             <button class="detail-button danger" @click="deleteSelectedRecord">
-              🗑️ 删除记录
+               删除记录
             </button>
           </div>
         </div>
 
         <div v-else class="no-selection">
           <div class="no-selection-content">
-            <span class="no-selection-icon">📋</span>
+            <span class="no-selection-icon"></span>
             <p>选择一条记录查看详情</p>
           </div>
         </div>
@@ -467,16 +467,18 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useSimulation } from '@/composables/useSimulation'
+import dataService from '@/services/dataService'
+import resultStorage from '@/utils/resultStorage'
 
 // 使用模拟状态和存储功能
 const {
-  getResultHistory,
   addToFavorites,
   getFavorites,
-  exportResult,
-  compareResults,
-  deleteResult
+  compareResults
 } = useSimulation()
+
+// 数据源状态（MySQL在线 / 本地兜底）
+const dataSourceLabel = ref('检测中...')
 
 // 筛选条件
 const searchQuery = ref('')
@@ -500,11 +502,12 @@ const comparisonResult = ref(null)
 const historyRecords = ref([])
 const loadingHistory = ref(false)
 
-// 加载历史记录
+// 加载历史记录（MySQL优先，本地兜底）
 const loadHistory = async () => {
   loadingHistory.value = true
   try {
-    const rawHistory = getResultHistory()
+    const rawHistory = await dataService.getHistory()
+    dataSourceLabel.value = await dataService.getDataSourceLabel()
     historyRecords.value = rawHistory.map(record => ({
       id: record.id,
       name: record.scenarioName,
@@ -520,6 +523,7 @@ const loadHistory = async () => {
       carbonRed: record.results.pv_scenario?.co2_reduction || 0,
       params: record.params,
       metadata: record.metadata,
+      source: record.source || 'local',
       rawRecord: record
     }))
   } catch (error) {
@@ -669,7 +673,7 @@ const deleteRecord = async (record) => {
   }
 
   try {
-    const success = deleteResult(record.id)
+    const success = await dataService.deleteRecord(record.id)
     if (success) {
       // 从本地列表中移除
       const index = historyRecords.value.findIndex(r => r.id === record.id)
@@ -709,15 +713,21 @@ const rerunSimulation = () => {
 const exportRecord = () => {
   if (selectedRecord.value) {
     try {
-      // 导出为JSON格式
-      const blob = exportResult(selectedRecord.value.id, 'json')
+      // 数据库记录直接由自身数据导出；本地记录走resultStorage
+      const record = selectedRecord.value
+      let blob
+      if (record.source === 'mysql') {
+        blob = new Blob([JSON.stringify(record.rawRecord, null, 2)], { type: 'application/json' })
+      } else {
+        blob = resultStorage.exportResult(record.id, 'json')
+      }
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `simulation-${selectedRecord.value.id}.json`
+      a.download = `simulation-${record.id}.json`
       a.click()
       URL.revokeObjectURL(url)
-      console.log('导出成功:', selectedRecord.value.name)
+      console.log('导出成功:', record.name)
     } catch (error) {
       console.error('导出失败:', error)
       alert('导出失败: ' + error.message)

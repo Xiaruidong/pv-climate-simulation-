@@ -1,7 +1,7 @@
 <template>
   <aside class="side-panel">
     <div class="side-panel-header">
-      <h2 class="side-panel-title">📈 模拟计算数据</h2>
+      <h2 class="side-panel-title"> 模拟计算数据</h2>
       <span class="live-indicator">● 模拟</span>
     </div>
 
@@ -117,7 +117,7 @@
 
       <!-- 导出操作 -->
       <div class="export-panel">
-        <h3 class="export-title">📥 数据导出</h3>
+        <h3 class="export-title"> 数据导出</h3>
         <div class="export-buttons">
           <button @click="exportCurrentResult('json')" class="export-button">
             JSON格式

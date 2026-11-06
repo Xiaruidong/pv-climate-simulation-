@@ -2,7 +2,7 @@
   <div class="simulation-page">
     <!-- 页面标题 -->
     <div class="page-header">
-      <h1 class="page-title">🔬 高级模拟控制台</h1>
+      <h1 class="page-title"> 高级模拟控制台</h1>
       <p class="page-subtitle">配置和运行详细的光伏热效应模拟</p>
     </div>
 
@@ -11,7 +11,7 @@
       <!-- 左侧：模拟配置面板 -->
       <div class="config-panel">
         <div class="panel-section">
-          <h3 class="section-title">⚙️ 模拟配置</h3>
+          <h3 class="section-title"> 模拟配置</h3>
 
           <!-- 模拟类型选择 -->
           <div class="config-group">
@@ -81,7 +81,7 @@
           <!-- 高级设置 -->
           <div class="config-group">
             <details class="advanced-settings">
-              <summary>🔧 高级设置</summary>
+              <summary> 高级设置</summary>
               <div class="advanced-content">
                 <div class="advanced-item">
                   <label>收敛容差</label>
@@ -103,16 +103,16 @@
         <!-- 模拟控制按钮 -->
         <div class="simulation-controls">
           <button class="control-button primary" @click="startSimulation" :disabled="isRunning">
-            {{ isRunning ? '⏳ 模拟运行中...' : '🚀 开始模拟' }}
+            {{ isRunning ? ' 模拟运行中...' : ' 开始模拟' }}
           </button>
           <button class="control-button" @click="pauseSimulation" :disabled="!isRunning">
-            ⏸️ 暂停
+             暂停
           </button>
           <button class="control-button" @click="stopSimulation" :disabled="!isRunning && !simulationResults">
-            ⏹️ 停止
+             停止
           </button>
           <button class="control-button" @click="resetSimulation">
-            🔄 重置
+             重置
           </button>
         </div>
       </div>
@@ -120,7 +120,7 @@
       <!-- 中间：模拟状态和进度 -->
       <div class="status-panel">
         <div class="panel-section">
-          <h3 class="section-title">📊 模拟状态</h3>
+          <h3 class="section-title"> 模拟状态</h3>
 
           <!-- 状态指示器 -->
           <div class="status-indicators">
@@ -155,7 +155,7 @@
 
           <!-- 实时数据预览 -->
           <div v-if="simulationResults" class="realtime-preview">
-            <h4 class="preview-title">📈 实时结果预览</h4>
+            <h4 class="preview-title"> 实时结果预览</h4>
             <div class="preview-grid">
               <div class="preview-item">
                 <span class="preview-label">当前年份</span>
@@ -179,7 +179,7 @@
 
         <!-- 模拟日志 -->
         <div class="panel-section">
-          <h3 class="section-title">📋 模拟日志</h3>
+          <h3 class="section-title"> 模拟日志</h3>
           <div class="log-container">
             <div
               v-for="(log, index) in simulationLogs"
@@ -196,14 +196,14 @@
       <!-- 右侧：结果预览和导出 -->
       <div class="results-panel">
         <div class="panel-section">
-          <h3 class="section-title">📊 结果分析</h3>
+          <h3 class="section-title"> 结果分析</h3>
 
           <!-- 结果摘要 -->
           <div v-if="simulationResults" class="results-summary">
             <div class="summary-cards">
               <div class="summary-card">
                 <div class="card-title">温度变化</div>
-                <div class="card-value :class="simulationResults.tempChange >= 0 ? 'warm' : 'cool'">
+                <div class="card-value" :class="simulationResults.tempChange >= 0 ? 'warm' : 'cool'">
                   {{ simulationResults.tempChange >= 0 ? '+' : '' }}{{ simulationResults.tempChange }}°C
                 </div>
               </div>
@@ -240,19 +240,19 @@
 
           <!-- 导出选项 -->
           <div class="export-options">
-            <h4 class="export-title">📥 导出结果</h4>
+            <h4 class="export-title"> 导出结果</h4>
             <div class="export-buttons">
               <button class="export-button" @click="exportResults('excel')">
-                📊 Excel格式
+                 Excel格式
               </button>
               <button class="export-button" @click="exportResults('csv')">
-                📄 CSV数据
+                 CSV数据
               </button>
               <button class="export-button" @click="exportResults('pdf')">
-                📑 PDF报告
+                 PDF报告
               </button>
               <button class="export-button" @click="exportResults('json')">
-                🔧 JSON格式
+                 JSON格式
               </button>
             </div>
           </div>
@@ -260,7 +260,7 @@
 
         <!-- 历史模拟记录 -->
         <div class="panel-section">
-          <h3 class="section-title">🗂️ 历史模拟</h3>
+          <h3 class="section-title"> 历史模拟</h3>
           <div class="history-list">
             <div
               v-for="record in simulationHistory"

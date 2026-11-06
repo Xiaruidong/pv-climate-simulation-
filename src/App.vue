@@ -42,10 +42,10 @@
     <transition name="slide-fade">
       <div v-if="notification.show" :class="['global-notification', notification.type]">
         <div class="notification-content">
-          <span class="notification-icon">{{ notification.icon }}</span>
+          <span v-if="notification.icon" class="notification-icon">{{ notification.icon }}</span>
           <span class="notification-message">{{ notification.message }}</span>
         </div>
-        <button class="notification-close" @click="dismissNotification">✕</button>
+        <button class="notification-close" @click="dismissNotification"></button>
       </div>
     </transition>
   </div>
@@ -77,7 +77,7 @@ const visualization = ref(null)
 const notification = ref({
   show: false,
   type: 'info',
-  icon: 'ℹ️',
+  icon: 'ℹ',
   message: '',
   duration: 3000
 })
@@ -95,7 +95,7 @@ const handleTabChange = (tabId) => {
     settings: '设置'
   }
 
-  showNotification('info', `已切换到${pageNames[tabId]}页面`, '📄')
+  showNotification('info', `已切换到${pageNames[tabId]}页面`, '')
 }
 
 // 处理模拟启动
@@ -104,13 +104,13 @@ const handleSimulation = async (params) => {
 
   // 验证参数（使用新参数名）
   if (params.albedo_pv > 1 || params.albedo_pv < 0) {
-    showNotification('error', '光伏反照率值无效，必须在0-1之间', '⚠️')
+    showNotification('error', '光伏反照率值无效，必须在0-1之间', '')
     return
   }
 
   // 验证覆盖率
   if (params.coverage_ratio < 0 || params.coverage_ratio > 0.01) {
-    showNotification('warning', '覆盖率超出建议范围 (0-0.01%)', '⚠️')
+    showNotification('warning', '覆盖率超出建议范围 (0-0.01%)', '')
   }
 
   try {
@@ -135,16 +135,16 @@ const handleSimulation = async (params) => {
     await triggerCalculation()
 
     // 显示成功通知
-    showNotification('success', '真实物理计算完成！3D可视化已更新', '✅')
+    showNotification('success', '真实物理计算完成！3D可视化已更新', '')
 
   } catch (error) {
     console.error('Simulation error:', error)
-    showNotification('error', `计算失败: ${error.message}`, '❌')
+    showNotification('error', `计算失败: ${error.message}`, '')
   }
 }
 
 // 显示通知
-const showNotification = (type, message, icon = 'ℹ️') => {
+const showNotification = (type, message, icon = 'ℹ') => {
   notification.value.type = type
   notification.value.message = message
   notification.value.icon = icon
@@ -167,19 +167,19 @@ onMounted(() => {
 
   // 欢迎消息
   setTimeout(() => {
-    showNotification('info', '欢迎使用光伏热效应模拟器 - 已加载真实物理常数', '👋')
+    showNotification('info', '欢迎使用光伏热效应模拟器 - 已加载真实物理常数', '')
   }, 1000)
 
   // 监听设置页面的导航事件
   window.addEventListener('navigateToDashboard', () => {
     currentPage.value = 'dashboard'
-    showNotification('info', '已返回主界面', '🏠')
+    showNotification('info', '已返回主界面', '')
   })
 
   // 监听设置更新事件
   window.addEventListener('settingsUpdated', (event) => {
     console.log('设置已更新:', event.detail)
-    showNotification('success', '系统设置已更新', '✨')
+    showNotification('success', '系统设置已更新', '')
   })
 
   // 监听主题变化事件
@@ -197,7 +197,7 @@ onMounted(() => {
   // 监听语言变化事件
   window.addEventListener('languageChanged', (event) => {
     console.log('语言已变化:', event.detail.language)
-    showNotification('success', '语言已切换', '🌐')
+    showNotification('success', '语言已切换', '')
   })
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="temperature-chart">
-    <div class="info-card-title">🌡️ 地表温度演变</div>
+    <div class="info-card-title"> 地表温度演变</div>
 
     <div v-if="loading" class="loading-state">
       <el-icon class="is-loading"><Loading /></el-icon>

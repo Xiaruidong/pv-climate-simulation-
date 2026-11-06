@@ -491,4 +491,5 @@ async def compare_with_literature():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # 8000端口常被其他服务占用，EBM计算服务使用8001
+    uvicorn.run(app, host="0.0.0.0", port=8001)

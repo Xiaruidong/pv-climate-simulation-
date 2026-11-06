@@ -1,6 +1,6 @@
 <template>
   <div class="comparison-chart">
-    <div class="info-card-title">📊 平衡状态对比</div>
+    <div class="info-card-title"> 平衡状态对比</div>
 
     <div v-if="loading" class="loading-state">
       <el-icon class="is-loading"><Loading /></el-icon>
@@ -68,7 +68,7 @@
 
       <!-- 效果评估 -->
       <div class="assessment-panel">
-        <div class="assessment-title">🎯 综合效果评估</div>
+        <div class="assessment-title"> 综合效果评估</div>
         <div class="assessment-content">
           <div class="assessment-item">
             <div class="assessment-label">气候效应</div>

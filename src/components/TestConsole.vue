@@ -1,7 +1,7 @@
 <template>
   <div class="test-console">
     <div class="console-header">
-      <h2>🧪 参数测试控制台</h2>
+      <h2> 参数测试控制台</h2>
       <div class="header-actions">
         <button @click="loadDefaultTests" class="btn btn-secondary">加载默认测试</button>
         <button @click="runAllTests" class="btn btn-primary">运行所有测试</button>
@@ -33,9 +33,9 @@
           >
             <div class="test-name">{{ test.name }}</div>
             <div class="test-status">
-              <span v-if="test.running">⏳</span>
-              <span v-else-if="test.completed">✅</span>
-              <span v-else>⭕</span>
+              <span v-if="test.running"></span>
+              <span v-else-if="test.completed"></span>
+              <span v-else></span>
             </div>
           </div>
         </div>
@@ -74,10 +74,10 @@
 
         <div class="test-actions">
           <button @click="runCurrentTest" class="btn btn-primary" :disabled="!currentTest">
-            🚀 运行当前测试
+             运行当前测试
           </button>
           <button @click="applyToDashboard" class="btn btn-success" :disabled="!currentTest || !currentTest.completed">
-            📊 应用到仪表板
+             应用到仪表板
           </button>
         </div>
       </div>
@@ -123,7 +123,7 @@
               {{ currentTest.result.cooling_efficiency.toFixed(2) }}%
             </div>
             <div class="result-detail">
-              {{ currentTest.result.cooling_effect ? '✅ 降温生效' : '❌ 升温效应' }}
+              {{ currentTest.result.cooling_effect ? ' 降温生效' : ' 升温效应' }}
             </div>
           </div>
         </div>

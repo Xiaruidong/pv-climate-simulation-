@@ -11,7 +11,7 @@
       <!-- 左侧：设置分类 -->
       <div class="categories-panel">
         <div class="panel-section">
-          <h3 class="section-title">📋 设置分类</h3>
+          <h3 class="section-title"> 设置分类</h3>
 
           <div class="setting-categories">
             <button
@@ -20,7 +20,7 @@
               :class="['category-button', { active: activeCategory === category.id }]"
               @click="activeCategory = category.id"
             >
-              <span class="category-icon">{{ category.icon }}</span>
+              <span v-if="category.icon" class="category-icon">{{ category.icon }}</span>
               <span class="category-name">{{ category.name }}</span>
             </button>
           </div>
@@ -28,19 +28,19 @@
 
         <!-- 快速操作 -->
         <div class="panel-section">
-          <h3 class="section-title">⚡ 快速操作</h3>
+          <h3 class="section-title"> 快速操作</h3>
           <div class="quick-actions">
             <button class="quick-action" @click="resetAllSettings">
-              🔄 重置所有设置
+               重置所有设置
             </button>
             <button class="quick-action" @click="exportSettings">
-              📥 导出配置
+               导出配置
             </button>
             <button class="quick-action" @click="importSettings">
-              📤 导入配置
+               导入配置
             </button>
             <button class="quick-action primary" @click="saveAllSettings">
-              💾 保存所有更改
+               保存所有更改
             </button>
           </div>
         </div>
@@ -50,7 +50,7 @@
       <div class="settings-panel">
         <!-- 通用设置 -->
         <div v-if="activeCategory === 'general'" class="setting-group">
-          <h3 class="setting-group-title">🎛️ 通用设置</h3>
+          <h3 class="setting-group-title"> 通用设置</h3>
 
           <div class="setting-item">
             <div class="setting-info">
@@ -99,7 +99,7 @@
 
         <!-- 计算设置 -->
         <div v-if="activeCategory === 'calculation'" class="setting-group">
-          <h3 class="setting-group-title">🔬 计算设置</h3>
+          <h3 class="setting-group-title"> 计算设置</h3>
 
           <div class="setting-item">
             <div class="setting-info">
@@ -184,7 +184,7 @@
 
         <!-- 数据管理设置 -->
         <div v-if="activeCategory === 'data'" class="setting-group">
-          <h3 class="setting-group-title">💾 数据管理设置</h3>
+          <h3 class="setting-group-title"> 数据管理设置</h3>
 
           <div class="setting-item">
             <div class="setting-info">
@@ -240,14 +240,14 @@
               <span class="setting-description">删除所有历史模拟记录</span>
             </div>
             <button class="danger-button" @click="clearAllHistory">
-              🗑️ 清除数据
+               清除数据
             </button>
           </div>
         </div>
 
         <!-- 显示设置 -->
         <div v-if="activeCategory === 'display'" class="setting-group">
-          <h3 class="setting-group-title">🎨 显示设置</h3>
+          <h3 class="setting-group-title"> 显示设置</h3>
 
           <div class="setting-item">
             <div class="setting-info">
@@ -312,7 +312,7 @@
 
         <!-- 存储管理 -->
         <div v-if="activeCategory === 'storage'" class="setting-group">
-          <h3 class="setting-group-title">📊 存储管理</h3>
+          <h3 class="setting-group-title"> 存储管理</h3>
 
           <!-- 存储统计信息 -->
           <div class="storage-stats">
@@ -348,25 +348,25 @@
             <h4 class="operation-title">数据管理操作</h4>
 
             <button class="operation-button" @click="calculateStorageStats">
-              🔄 刷新统计
+               刷新统计
             </button>
 
             <button class="operation-button" @click="batchDeleteHistory">
-              🗑️ 批量删除（按天数）
+               批量删除（按天数）
             </button>
 
             <button class="operation-button" @click="deleteByDateRange">
-              📅 按日期范围删除
+               按日期范围删除
             </button>
 
             <button class="operation-button primary" @click="exportAllData">
-              📦 导出所有数据
+               导出所有数据
             </button>
           </div>
 
           <!-- 存储优化建议 -->
           <div class="storage-tips" v-if="storageStats.storageHealth !== 'good'">
-            <h4 class="tips-title">💡 存储优化建议</h4>
+            <h4 class="tips-title"> 存储优化建议</h4>
             <ul class="tips-list">
               <li v-if="storageStats.storageHealth === 'critical'">
                 存储空间紧张，建议删除部分历史记录
@@ -386,7 +386,7 @@
 
         <!-- 关于 -->
         <div v-if="activeCategory === 'about'" class="setting-group">
-          <h3 class="setting-group-title">ℹ️ 关于系统</h3>
+          <h3 class="setting-group-title">ℹ 关于系统</h3>
 
           <div class="about-info">
             <div class="about-item">
@@ -411,7 +411,7 @@
             </div>
             <div class="about-item">
               <span class="about-label">存储方案:</span>
-              <span class="about-value">localStorage (可选MySQL)</span>
+              <span class="about-value">{{ storageStatusLabel }}</span>
             </div>
             <div class="about-item">
               <span class="about-label">部署平台:</span>
@@ -427,30 +427,30 @@
 
           <!-- 系统特性 -->
           <div class="system-features">
-            <h4 class="features-title">✨ 系统特性</h4>
+            <h4 class="features-title"> 系统特性</h4>
             <div class="features-list">
               <div class="feature-item">
-                <span class="feature-icon">🔬</span>
+                <span class="feature-icon"></span>
                 <span class="feature-text">真实物理计算</span>
               </div>
               <div class="feature-item">
-                <span class="feature-icon">🎯</span>
+                <span class="feature-icon"></span>
                 <span class="feature-text">高精度结果显示</span>
               </div>
               <div class="feature-item">
-                <span class="feature-icon">🌍</span>
+                <span class="feature-icon"></span>
                 <span class="feature-text">实时3D可视化</span>
               </div>
               <div class="feature-item">
-                <span class="feature-icon">💾</span>
+                <span class="feature-icon"></span>
                 <span class="feature-text">本地数据存储</span>
               </div>
               <div class="feature-item">
-                <span class="feature-icon">📊</span>
+                <span class="feature-icon"></span>
                 <span class="feature-text">历史记录管理</span>
               </div>
               <div class="feature-item">
-                <span class="feature-icon">🔄</span>
+                <span class="feature-icon"></span>
                 <span class="feature-text">数据对比功能</span>
               </div>
             </div>
@@ -461,7 +461,7 @@
       <!-- 右侧：设置预览和说明 -->
       <div class="preview-panel">
         <div class="panel-section">
-          <h3 class="section-title">👁️ 设置预览</h3>
+          <h3 class="section-title"> 设置预览</h3>
 
           <!-- 当前设置摘要 -->
           <div class="settings-summary">
@@ -496,7 +496,7 @@
 
           <!-- 快捷键提示 -->
           <div class="shortcuts-info">
-            <h4 class="shortcuts-title">⌨️ 快捷键</h4>
+            <h4 class="shortcuts-title"> 快捷键</h4>
             <div class="shortcuts-list">
               <div class="shortcut-item">
                 <span class="shortcut-key">Ctrl+S</span>
@@ -514,23 +514,23 @@
         <div class="panel-section">
           <div class="settings-actions">
             <button class="action-button primary" @click="saveAllSettings">
-              💾 保存设置
+               保存设置
             </button>
             <button class="action-button" @click="resetCurrentCategory">
-              🔄 重置当前
+               重置当前
             </button>
             <button class="action-button" @click="goBack">
               ← 返回主界面
             </button>
             <button class="action-button" @click="applySettings">
-              ✨ 应用设置
+               应用设置
             </button>
           </div>
         </div>
 
         <!-- 设置提示 -->
         <div class="settings-tips">
-          <h4 class="tips-title">💡 使用提示</h4>
+          <h4 class="tips-title"> 使用提示</h4>
           <ul class="tips-list">
             <li>设置修改后会自动保存到浏览器</li>
             <li>可以导出设置进行备份</li>
@@ -546,23 +546,32 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useSettings } from '../composables/useSettings'
+import dataService from '@/services/dataService'
+
+// 数据库连接状态（用于"存储方案"显示）
+const dbStatusLabel = ref('MySQL (检测中...)')
+const storageStatusLabel = computed(() => {
+  return globalSettings.language === 'en'
+    ? `MySQL primary + localStorage fallback (${dbStatusLabel.value})`
+    : `MySQL主存储 + 本地兜底（${dbStatusLabel.value}）`
+})
 
 // 使用全局设置composable
 const { settings: globalSettings, languages, applyTheme } = useSettings()
 
 // 设置分类 - 使用计算属性响应语言变化
 const categories = computed(() => [
-  { id: 'general', name: languages[globalSettings.language]['settings.general'], icon: '🎛️' },
-  { id: 'calculation', name: languages[globalSettings.language]['settings.calculation'], icon: '🔬' },
-  { id: 'data', name: languages[globalSettings.language]['settings.data'], icon: '💾' },
-  { id: 'display', name: languages[globalSettings.language]['settings.display'], icon: '🎨' },
-  { id: 'storage', name: languages[globalSettings.language]['settings.storage'], icon: '📊' },
-  { id: 'about', name: languages[globalSettings.language]['settings.about'], icon: 'ℹ️' }
+  { id: 'general', name: languages[globalSettings.language]['settings.general'], icon: '' },
+  { id: 'calculation', name: languages[globalSettings.language]['settings.calculation'], icon: '' },
+  { id: 'data', name: languages[globalSettings.language]['settings.data'], icon: '' },
+  { id: 'display', name: languages[globalSettings.language]['settings.display'], icon: '' },
+  { id: 'storage', name: languages[globalSettings.language]['settings.storage'], icon: '' },
+  { id: 'about', name: languages[globalSettings.language]['settings.about'], icon: 'ℹ' }
 ])
 
 // 页面标题 - 响应语言变化
 const pageTitle = computed(() => {
-  return globalSettings.language === 'en' ? '⚙️ System Settings' : '⚙️ 系统设置'
+  return globalSettings.language === 'en' ? ' System Settings' : ' 系统设置'
 })
 
 const pageSubtitle = computed(() => {
@@ -842,6 +851,9 @@ watch([displaySettings, calculationSettings], () => {
 onMounted(() => {
   loadSettings()
   calculateStorageStats()
+  dataService.getDataSourceLabel().then(label => {
+    dbStatusLabel.value = label.includes('MySQL') ? 'MySQL已连接' : '数据库离线'
+  })
 })
 
 // 加载设置

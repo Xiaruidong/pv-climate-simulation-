@@ -235,7 +235,10 @@ class RealEBMModel:
 
     def __init__(self):
         # 使用真实常数
-        self.CE = ClimateConstants.ATMOSPHERE_HEAT_CAPACITY
+        # 地球系统平均热容量（海洋混合层尺度，与ebm_core.py一致）：
+        # 弛豫时间CE/B≈3年，1年步长的欧拉积分稳定；
+        # 若用仅大气的1e7会使弛豫时间<0.2年，积分发散
+        self.CE = 2.08e8
         self.S0 = PhysicalConstants.SOLAR_CONSTANT
         self.AREF = 210.2
         self.B = 2.15
@@ -253,7 +256,8 @@ class RealEBMModel:
 
         # 常数预计算（性能优化）
         self.SECONDS_PER_YEAR = 31536000
-        self.CONVERSION_FACTOR = self.SECONDS_PER_YEAR / 1e12
+        # dT/dt单位为K/s（CE为J/m²/K），乘以秒/年转换为K/年
+        self.CONVERSION_FACTOR = self.SECONDS_PER_YEAR
         self.CO2_MASS_PER_PPM = 2.13e12  # kg CO2 per ppm
 
         # 缓存机制
@@ -451,12 +455,16 @@ class RealEBMModel:
         # 使用向量化操作提高性能
         deltas = np.abs(np.diff(ts))
 
-        # 找到第一个满足容差的点
-        equilibrium_indices = np.where(deltas < tolerance)[0]
+        # 从后向前找：平衡点必须是"从该点起所有后续步长都小于容差"，
+        # 只看单个步长会在初始阶段误判（初始阶段年变化量本来就小于容差）
+        below = deltas < tolerance
+        equilibrium_index = len(ts) - 1
+        for i in range(len(below) - 1, -1, -1):
+            if not below[i]:
+                equilibrium_index = i + 1
+                break
 
-        if len(equilibrium_indices) > 0:
-            return equilibrium_indices[0]
-        return len(ts) - 1
+        return min(equilibrium_index, len(ts) - 1)
 
     def analyze_convergence(self, ts):
         """分析收敛性"""
@@ -502,6 +510,8 @@ class RealEBMModel:
 
             # 计算CO2减排
             co2_reduction = self.calculate_co2_reduction(coverage_ratio, pv_efficiency)
+            # CO2减排量不能使浓度降到前工业化水平(280ppm)以下
+            co2_reduction = min(co2_reduction, max(co2_current - self.CREF, 0))
             co2_pv = co2_current - co2_reduction
 
             # 运行温度积分
@@ -556,7 +566,7 @@ class RealEBMModel:
                     'comparison': {
                         'temperature_change': float(temp_change),
                         'albedo_change': float(albedo_change),
-                        'cooling_effect': temp_change < 0,
+                        'cooling_effect': bool(temp_change < 0),
                         'heat_island_effect': float(temp_change * 1.1),
                         'cooling_efficiency': float(abs(temp_change) * 10)
                     },

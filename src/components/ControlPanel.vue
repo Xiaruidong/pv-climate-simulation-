@@ -1,7 +1,7 @@
 <template>
   <div class="control-panel">
     <div class="info-card">
-      <div class="info-card-title">⚙️ 参数配置</div>
+      <div class="info-card-title"> 参数配置</div>
 
       <!-- 面板类型选择 -->
       <div class="form-item">
@@ -62,7 +62,7 @@
 
     <!-- 预设场景 -->
     <div class="info-card">
-      <div class="info-card-title">📋 预设场景</div>
+      <div class="info-card-title"> 预设场景</div>
       <el-button
         v-for="(scenario, index) in scenarios"
         :key="index"
@@ -77,13 +77,13 @@
     <!-- 操作按钮 -->
     <div class="action-buttons">
       <button class="action-button primary-button" @click="startSimulation">
-        🚀 开始模拟
+         开始模拟
       </button>
       <button class="action-button secondary-button" @click="resetParams">
-        🔄 重置参数
+         重置参数
       </button>
       <button class="action-button secondary-button" @click="exportConfig">
-        📥 导出配置
+         导出配置
       </button>
     </div>
 
@@ -143,21 +143,21 @@ const formatCoverage = (value) => {
 // 预设场景
 const scenarios = [
   {
-    name: '🌱 环保方案',
+    name: ' 环保方案',
     panelType: 'new',
     coverageRatio: 1e-8,
     co2Current: 420,
     simulationYears: 100
   },
   {
-    name: '🔥 激进方案',
+    name: ' 激进方案',
     panelType: 'new',
     coverageRatio: 1e-7,
     co2Current: 420,
     simulationYears: 100
   },
   {
-    name: '⚖️ 对比基准',
+    name: ' 对比基准',
     panelType: 'traditional',
     coverageRatio: 5e-8,
     co2Current: 420,

@@ -1,7 +1,7 @@
 <template>
   <aside class="side-panel">
     <div class="side-panel-header">
-      <h2 class="side-panel-title">📊 物理计算参数</h2>
+      <h2 class="side-panel-title"> 物理计算参数</h2>
       <button class="tech-button" @click="toggleCollapse">
         {{ isCollapsed ? '◀' : '▶' }}
       </button>
@@ -10,13 +10,11 @@
     <div v-if="!isCollapsed" class="side-panel-content">
       <!-- 核心计算参数 -->
       <div class="param-section">
-        <h3 class="param-section-title">⚡ 光伏系统参数</h3>
+        <h3 class="param-section-title"> 光伏系统参数</h3>
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">光伏面板反照率</span>
-            <span class="param-label-info" title="直接影响降温效果的主要参数">⭐</span>
-          </div>
+            <span class="param-label-text">光伏面板反照率</span>          </div>
           <input
             v-model.number="params.albedo_pv"
             type="number"
@@ -33,9 +31,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">光伏覆盖率</span>
-            <span class="param-label-info" title="光伏部署面积占总陆地面积的比例">⭐</span>
-          </div>
+            <span class="param-label-text">光伏覆盖率</span>          </div>
           <input
             v-model.number="params.coverage_ratio"
             type="number"
@@ -52,9 +48,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">光伏转化效率</span>
-            <span class="param-label-info" title="影响发电量和CO2减排量">⭐</span>
-          </div>
+            <span class="param-label-text">光伏转化效率</span>          </div>
           <input
             v-model.number="params.pv_efficiency"
             type="number"
@@ -71,9 +65,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">光伏面板类型</span>
-            <span class="param-label-info" title="快速设置典型面板参数">⚡</span>
-          </div>
+            <span class="param-label-text">光伏面板类型</span>          </div>
           <select v-model="params.panel_type" class="tech-select" @change="applyPanelType">
             <option value="mono">单晶硅 (效率23%, 反照率0.307)</option>
             <option value="poly">多晶硅 (效率16%, 反照率0.307)</option>
@@ -86,13 +78,11 @@
 
       <!-- 地表反照率参数 -->
       <div class="param-section">
-        <h3 class="param-section-title">🌍 地表反照率参数</h3>
+        <h3 class="param-section-title"> 地表反照率参数</h3>
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">陆地反照率</span>
-            <span class="param-label-info" title="计算地表反照率的基准值">⭐</span>
-          </div>
+            <span class="param-label-text">陆地反照率</span>          </div>
           <input
             v-model.number="params.albedo_land"
             type="number"
@@ -109,9 +99,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">海洋反照率</span>
-            <span class="param-label-info" title="海洋表面的反射率">💧</span>
-          </div>
+            <span class="param-label-text">海洋反照率</span>          </div>
           <input
             v-model.number="params.albedo_ocean"
             type="number"
@@ -128,9 +116,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">地表类型预设</span>
-            <span class="param-label-info" title="快速设置地表反照率组合">⚡</span>
-          </div>
+            <span class="param-label-text">地表类型预设</span>          </div>
           <select v-model="params.surface_type" class="tech-select" @change="applySurfaceType">
             <option value="desert">沙漠地区 (陆地表0.35)</option>
             <option value="grassland">草原地区 (陆地表0.25)</option>
@@ -143,13 +129,11 @@
 
       <!-- 气候参数 -->
       <div class="param-section">
-        <h3 class="param-section-title">🌡 气候参数</h3>
+        <h3 class="param-section-title"> 气候参数</h3>
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">CO₂浓度</span>
-            <span class="param-label-info" title="大气CO₂浓度影响温室效应">⭐</span>
-          </div>
+            <span class="param-label-text">CO₂浓度</span>          </div>
           <input
             v-model.number="params.co2_current"
             type="number"
@@ -166,9 +150,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">气候情景预设</span>
-            <span class="param-label-info" title="快速设置不同气候情景">⚡</span>
-          </div>
+            <span class="param-label-text">气候情景预设</span>          </div>
           <select v-model="params.climate_scenario" class="tech-select" @change="applyClimateScenario">
             <option value="pre_industrial">前工业化 (280ppm)</option>
             <option value="current">当前水平 (420ppm)</option>
@@ -180,9 +162,7 @@
 
         <div class="param-group">
           <div class="param-label">
-            <span class="param-label-text">初始地表温度</span>
-            <span class="param-label-info" title="计算起始的温度基准">⭐</span>
-          </div>
+            <span class="param-label-text">初始地表温度</span>          </div>
           <input
             v-model.number="params.initial_temp"
             type="number"
@@ -200,12 +180,12 @@
 
       <!-- 模拟控制参数 -->
       <div class="param-section">
-        <h3 class="param-section-title">⚙️ 模拟控制</h3>
+        <h3 class="param-section-title"> 模拟控制</h3>
 
         <div class="param-group">
           <div class="param-label">
             <span class="param-label-text">模拟时长</span>
-            <span class="param-label-info">影响计算精度和收敛时间</span>
+            <span class="param-label-hint">影响计算精度和收敛时间</span>
           </div>
           <select v-model="params.simulation_years" class="tech-select">
             <option value="50">50年 (快速评估)</option>
@@ -218,7 +198,7 @@
         <div class="param-group">
           <div class="param-label">
             <span class="param-label-text">计算方法</span>
-            <span class="param-label-info">选择计算精度模式</span>
+            <span class="param-label-hint">选择计算精度模式</span>
           </div>
           <select v-model="params.calculation_method" class="tech-select">
             <option value="simplified">简化计算 (快速响应)</option>
@@ -229,7 +209,7 @@
 
       <!-- 参数预设 -->
       <div class="param-section">
-        <h3 class="param-section-title">🎯 快速预设</h3>
+        <h3 class="param-section-title"> 快速预设</h3>
 
         <div class="preset-buttons">
           <button @click="applyPreset('low_coverage')" class="preset-btn">
@@ -254,13 +234,13 @@
       <!-- 计算控制 -->
       <div class="param-actions">
         <button class="tech-button primary" @click="runSimulation" style="width: 100%;">
-          🚀 运行计算
+           运行计算
         </button>
         <button class="tech-button secondary" @click="resetParams" style="width: 100%; margin-top: 8px;">
-          🔄 重置参数
+           重置参数
         </button>
         <button class="tech-button" @click="exportParams" style="width: 100%; margin-top: 8px;">
-          📥 导出配置
+           导出配置
         </button>
       </div>
     </div>
@@ -276,16 +256,16 @@ const isCollapsed = ref(false)
 
 // 核心计算参数 - 与实际EBM模型一一对应
 const params = reactive({
-  // 光伏系统参数 ⭐⭐⭐⭐⭐
+  // 光伏系统参数 
   albedo_pv: 0.438,           // 光伏面板反照率
   coverage_ratio: 1e-8,       // 覆盖率比例
   pv_efficiency: 0.23,        // 光伏转化效率
 
-  // 地表反照率参数 ⭐⭐⭐⭐
+  // 地表反照率参数 
   albedo_land: 0.35,          // 陆地反照率
   albedo_ocean: 0.06,         // 海洋反照率
 
-  // 气候参数 ⭐⭐⭐⭐⭐
+  // 气候参数 
   co2_current: 420.0,         // CO2浓度 (ppm)
   initial_temp: 15.0,         // 初始地表温度 (°C)
 
@@ -552,6 +532,7 @@ defineExpose({
 .param-label {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
 }
@@ -566,6 +547,15 @@ defineExpose({
   font-size: 16px;
   color: var(--color-yellow);
   cursor: help;
+}
+
+/* 长文本提示：独占一行显示在标签下方，避免在窄面板中被挤成竖条 */
+.param-label-hint {
+  flex-basis: 100%;
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.4;
+  margin-top: -4px;
 }
 
 .tech-input {

@@ -18,7 +18,10 @@
     <div class="nav-right">
       <!-- 浏览器地址栏模拟 -->
       <div class="browser-bar">
-        <span>🌐</span>
+        <svg class="bar-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
         <input
           type="text"
           :value="browserUrl"
@@ -26,23 +29,47 @@
           @click="copyUrl"
         />
         <button class="browser-action" @click="refreshPage" title="刷新页面">
-          🔄
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
         </button>
       </div>
 
+      <!-- 语言快捷切换 -->
+      <button class="nav-icon lang-toggle" @click="toggleLanguage" :title="settings.language === 'zh' ? '切换到英文' : '切换到中文'">
+        {{ settings.language === 'zh' ? 'EN' : '中' }}
+      </button>
+
       <!-- 控制图标 -->
       <button class="nav-icon" @click="showNotifications" title="通知">
-        <span>🔔</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
         <span v-if="hasNotifications" class="notification-badge"></span>
       </button>
 
       <button class="nav-icon" @click="showSettings" title="设置">
-        <span>⚙️</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
       </button>
 
       <!-- 用户信息 -->
       <div class="user-info">
-        <span class="user-avatar">👤</span>
+        <svg class="user-avatar" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
         <span class="user-name">科研用户</span>
       </div>
     </div>
@@ -77,13 +104,18 @@ const tabs = computed(() => [
 // 软件标题 - 根据语言动态变化
 const softwareTitle = computed(() => {
   if (settings.language === 'en') {
-    return '⚡ PV Climate Effect Simulator - Dashboard'
+    return ' PV Climate Effect Simulator - Dashboard'
   }
-  return '⚡ 光伏热效应模拟器 - 仪表板'
+  return ' 光伏热效应模拟器 - 仪表板'
 })
 
-// 浏览器栏URL
-const browserUrl = ref('doshaard dashboard.nci')
+// 浏览器栏URL（装饰性展示文案）
+const browserUrl = ref('光伏气候效应模拟系统 v2.0')
+
+// 快捷切换中英文
+const toggleLanguage = () => {
+  settings.language = settings.language === 'zh' ? 'en' : 'zh'
+}
 
 // 是否有未读通知
 const hasNotifications = ref(true)
@@ -253,6 +285,22 @@ onMounted(() => {
   transform: translateY(-1px);
 }
 
+.nav-icon svg,
+.user-avatar,
+.bar-icon,
+.browser-action svg {
+  display: block;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.lang-toggle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #00d9ff;
+  width: 34px;
+  padding: 8px 0;
+}
+
 .notification-badge {
   position: absolute;
   top: 4px;
@@ -275,7 +323,7 @@ onMounted(() => {
 }
 
 .user-avatar {
-  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .user-name {

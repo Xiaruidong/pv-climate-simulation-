@@ -160,6 +160,31 @@ class ResultStorage {
   }
 
   /**
+   * 更新记录的元数据（例如数据库同步后回填dbRecordId）
+   * @param {string} resultId - 结果ID
+   * @param {Object} metaPatch - 要合并进metadata的字段
+   * @param {Object} extraPatch - 要合并到记录顶层的字段（如dbRecordId）
+   */
+  updateResultMeta(resultId, metaPatch = {}, extraPatch = {}) {
+    try {
+      const history = this.getHistory()
+      const index = history.findIndex(r => r.id === resultId)
+      if (index === -1) return false
+
+      history[index] = {
+        ...history[index],
+        ...extraPatch,
+        metadata: { ...history[index].metadata, ...metaPatch }
+      }
+      localStorage.setItem(STORAGE_KEYS.RESULTS, JSON.stringify(history))
+      return true
+    } catch (error) {
+      console.error('更新记录元数据失败:', error)
+      return false
+    }
+  }
+
+  /**
    * 根据ID获取结果
    * @param {string} resultId - 结果ID
    * @returns {Object|null} 结果记录

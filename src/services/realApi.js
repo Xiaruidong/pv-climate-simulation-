@@ -3,7 +3,7 @@
  * 连接后端EBM模型计算服务
  */
 
-const API_BASE_URL = 'http://localhost:8000'
+const API_BASE_URL = 'http://localhost:8001'
 
 // 获取物理常数
 export async function getPhysicalConstants() {
@@ -47,25 +47,56 @@ export async function validateSimulationParams(params) {
   }
 }
 
-// 运行真实模拟计算
+// 运行真实模拟计算（提交任务）
 export async function runRealSimulation(params) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/simulate/real`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(params)
-    })
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || '模拟计算失败')
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('模拟计算错误:', error)
-    throw error
+  const response = await fetch(`${API_BASE_URL}/api/simulate/real`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(params)
+  })
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    throw new Error(error.detail?.error || error.detail || '模拟计算请求失败')
   }
+  return await response.json()
+}
+
+// 获取计算结果（202=计算中，已完成返回完整结果）
+async function fetchTaskResult(taskId) {
+  const response = await fetch(`${API_BASE_URL}/api/simulate/real/${taskId}`)
+  if (response.status === 202) return null // 仍在计算
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    throw new Error(error.detail?.task_error || error.detail || '获取结果失败')
+  }
+  return await response.json()
+}
+
+/**
+ * 提交EBM精确计算并等待结果
+ * @param {Object} params - 模拟参数
+ * @param {Object} options - { timeoutMs: 总超时(默认10秒) }
+ * @returns {Promise<Object>} 与quickCalculate同构的结果（success/data）
+ */
+export async function runEbmSimulation(params, { timeoutMs = 10000 } = {}) {
+  const submitResult = await runRealSimulation(params)
+  const taskId = submitResult?.task_id
+  if (!taskId) throw new Error('计算服务未返回任务ID')
+
+  const deadline = Date.now() + timeoutMs
+  const pollInterval = 200
+
+  while (Date.now() < deadline) {
+    const result = await fetchTaskResult(taskId)
+    if (result) {
+      if (result.success) return result
+      throw new Error(result.error || 'EBM计算失败')
+    }
+    await new Promise(resolve => setTimeout(resolve, pollInterval))
+  }
+  throw new Error(`计算超时(${timeoutMs}ms)`)
 }
 
 // 获取计算结果
